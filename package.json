@@ -55,6 +55,6 @@
     "get-data": "bun run refresh:reference-data && bun run refresh:hoboleaks",
     "refresh:reference-data": "bun run ./downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ./data/reference-data",
     "refresh:hoboleaks": "bun run ./downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ./data/hoboleaks",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org jb-codecorsair --project star-kitten ./dist && sentry-cli sourcemaps upload --org jb-codecorsair --project star-kitten ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org jb-codecorsair --project star-kitten ./dist --auth-token ${SENTRY_AUTH_TOKEN} && sentry-cli sourcemaps upload --org jb-codecorsair --project star-kitten ./dist --auth-token ${SENTRY_AUTH_TOKEN}"
   }
 }

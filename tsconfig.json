@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    // Enable latest features
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    // Best practices
+    "strict": false,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false,
+
+    // Paths
+    "paths": {
+      "$db/*": ["./src/db/*"],
+      "$data/*": ["./data/*"],
+      "$lib": ["./src/lib"],
+      "$lib/*": ["./src/lib/*"],
+      "$discord": ["./src/discord"],
+      "$discord/*": ["./src/discord/*"],
+      "$plugins": ["./src/server/plugins"],
+      "$plugins/*": ["./src/server/plugins/*"],
+      "$eve": ["./src/eve"],
+      "$eve/*": ["./src/eve/*"],
+      "$module/*": ["./src/module/*"]
+    },
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}

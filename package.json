@@ -46,7 +46,7 @@
   "scripts": {
     "dev": "bun --watch src/main.ts",
     "start": "NODE_ENV=production bun src/main.ts",
-    "build": "mkdirp ./db && bun build --minify --sourcemap src/main.ts --target bun --outdir ./dist && bun run sentry:sourcemaps",
+    "build": "mkdirp ./db && bun build --minify --sourcemap src/main.ts --target bun --outdir ./dist",
     "test": "bun test",
     "lint": "prettier --check .",
     "format": "prettier --write .",

@@ -11,5 +11,5 @@ export const data = new SlashCommandBuilder()
   .addStringOption((option) => option.setName('name').setDescription('The name of the structure').setRequired(true));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  itemLookup(interaction, { category: MarkgetGroupIds.STRUCTURES, ephemeral: false, type: 'Structure' });
+  itemLookup(interaction, { category: MarkgetGroupIds.Structures, ephemeral: false, type: 'Structure' });
 }

@@ -11,5 +11,5 @@ export const data = new SlashCommandBuilder()
   .addStringOption((option) => option.setName('name').setDescription('The name of the module').setRequired(true));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  itemLookup(interaction, { category: MarkgetGroupIds.MODULES, ephemeral: false, type: 'Module' });
+  itemLookup(interaction, { category: MarkgetGroupIds.Modules, ephemeral: false, type: 'Module' });
 }

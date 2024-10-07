@@ -3,15 +3,15 @@ import { getMarketGroup } from "../models/marketGroup";
 import { getType, typeData, type Type } from "../models/type";
 
 export enum MarkgetGroupIds {
-  SHIPS = 4,
-  MODULES = 9,
-  DRONES = 157,
-  IMPLANTS = 541,
-  BOOSTERS = 303,
-  STRUCTURES = 477,
-  APPAREL = 475,
-  SKILLBOOKS = 150,
-  ALL = 0
+  Ships = 4,
+  Modules = 9,
+  DronesAndFighters = 157,
+  // IMPLANTS = 541,
+  // BOOSTERS = 303,
+  Structures = 477,
+  Apparel = 475,
+  // SKILLBOOKS = 150,
+  All = 0
 }
 
 export class Search {
@@ -33,7 +33,7 @@ export class Search {
       },
     });
 
-    if (market_group_id === MarkgetGroupIds.ALL) {
+    if (market_group_id === MarkgetGroupIds.All) {
       const types = Object.values(typeData).filter(
         (type) => type.published,
       );

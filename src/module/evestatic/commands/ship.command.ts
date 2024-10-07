@@ -11,5 +11,5 @@ export const data = new SlashCommandBuilder()
   .addStringOption((option) => option.setName('name').setDescription('The name of the ship').setRequired(true));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  itemLookup(interaction, { category: MarkgetGroupIds.SHIPS, ephemeral: false, type: 'Ship' });
+  itemLookup(interaction, { category: MarkgetGroupIds.Ships, ephemeral: false, type: 'Ship' });
 }

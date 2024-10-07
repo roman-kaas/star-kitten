@@ -3,8 +3,8 @@ import { MarkgetGroupIds, Search } from './lib/search';
 
 const init = async () => {
   // pre-load data for commands
-  Search.getInstance(MarkgetGroupIds.ALL);
-  Search.getInstance(MarkgetGroupIds.SHIPS);
+  Search.getInstance(MarkgetGroupIds.All);
+  Search.getInstance(MarkgetGroupIds.Ships);
 };
 
 export default {

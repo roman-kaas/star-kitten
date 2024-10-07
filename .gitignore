@@ -183,3 +183,6 @@ data/
 db/
 litefs/
 brainstorming/
+
+# Sentry Config File
+.sentryclirc

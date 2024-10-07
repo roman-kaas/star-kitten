@@ -34,6 +34,8 @@ export const enum PageKey {
 }
 
 export async function execute(interaction: CommandInteraction) {
+  let deferred = await interaction.deferReply();
+
   const user = db.getUserByDiscordId(interaction.user.id);
 
   const pages: Page<CharacterContext>[] = [
@@ -108,7 +110,7 @@ export async function execute(interaction: CommandInteraction) {
   };
 
   useNavigation({
-    interaction,
+    interaction: deferred.interaction as any,
     pages,
     key: !user || user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER,
     context: {

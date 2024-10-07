@@ -22,11 +22,13 @@ export const data = new SlashCommandBuilder()
   .addStringOption((option) => option.setName('name').setDescription('The type name').setRequired(true));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
+  const deferred = await interaction.deferReply({ ephemeral: true });
+
   const name = interaction.options.getString('name') ?? '';
 
   const type = Search.getInstance(MarkgetGroupIds.ALL).searchByName(name);
   if (!type) {
-    interaction.reply({ content: `Type ${name} not found`, ephemeral: true });
+    interaction.editReply({ content: `Type ${name} not found` });
     return;
   }
 
@@ -42,7 +44,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   };
 
   useNavigation({
-    interaction,
+    interaction: deferred.interaction as any,
     key: 'main',
     pages: [
       mainPage(PageKey.MAIN, interaction.locale),

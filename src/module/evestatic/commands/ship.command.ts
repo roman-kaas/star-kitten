@@ -31,18 +31,19 @@ export const buttonRow = (key: string) => createActionRow(
 );
 
 export async function execute(interaction: ChatInputCommandInteraction) {
+  const deferred = await interaction.deferReply();
   const name = interaction.options.getString('name') ?? '';
 
   const type = Search.getInstance(MarkgetGroupIds.SHIPS).searchByName(name);
   if (!type) {
-    interaction.reply({ content: `Sorry, I could not find any ship from the terms \`${name}\``, ephemeral: true });
+    interaction.editReply({ content: `Sorry, I could not find any ship from the terms \`${name}\`` });
     return;
   }
 
   console.debug(`found ship ${type.name.en}`);
 
   useNavigation({
-    interaction,
+    interaction: deferred.interaction as any,
     pages: [
       mainPage(PageKey.MAIN, interaction.locale),
       attributesPage(PageKey.ATTRIBUTES, interaction.locale),

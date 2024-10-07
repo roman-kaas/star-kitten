@@ -1,4 +1,4 @@
-import { MessageComponentInteraction, CommandInteraction, EmbedBuilder } from 'discord.js';
+import { MessageComponentInteraction, CommandInteraction, EmbedBuilder, InteractionResponse, type Interaction, type CacheType } from 'discord.js';
 import { errorResponse, validateEmbeds } from './embeds';
 
 
@@ -60,7 +60,7 @@ export const useNavigation = async ({
 
   const page = await getPage(currentPage, context);
   const pageContent = await page.content(context);
-  const currentMessage = await initialInteraction.reply({
+  const currentMessage = await initialInteraction.editReply({
     ...pageContent,
     fetchReply: true,
   } as any);

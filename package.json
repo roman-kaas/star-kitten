@@ -27,6 +27,8 @@
     "@elysiajs/html": "^1.1.1",
     "@elysiajs/swagger": "^1.1.3",
     "@lucia-auth/adapter-sqlite": "^3.0.2",
+    "@sentry/bun": "^8.33.1",
+    "@sentry/cli": "^2.36.6",
     "arctic": "^1.9.2",
     "cron-parser": "^4.9.0",
     "date-fns": "^4.1.0",
@@ -44,7 +46,7 @@
   "scripts": {
     "dev": "bun --watch src/main.ts",
     "start": "NODE_ENV=production bun src/main.ts",
-    "build": "mkdirp ./db && bun build src/main.ts --target bun --outdir ./dist",
+    "build": "mkdirp ./db && bun build --minify --sourcemap src/main.ts --target bun --outdir ./dist && bun run sentry:sourcemaps",
     "test": "bun test",
     "lint": "prettier --check .",
     "format": "prettier --write .",
@@ -52,6 +54,7 @@
     "vault:push": "bunx --bun dotenv-vault@latest push",
     "get-data": "bun run refresh:reference-data && bun run refresh:hoboleaks",
     "refresh:reference-data": "bun run ./downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ./data/reference-data",
-    "refresh:hoboleaks": "bun run ./downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ./data/hoboleaks"
+    "refresh:hoboleaks": "bun run ./downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ./data/hoboleaks",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org jb-codecorsair --project star-kitten ./dist && sentry-cli sourcemaps upload --org jb-codecorsair --project star-kitten ./dist"
   }
 }

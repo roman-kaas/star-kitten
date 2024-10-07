@@ -12,6 +12,7 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
+# Get Sentry auth token from build args
 ARG SENTRY_AUTH_TOKEN
 ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
 
@@ -30,6 +31,9 @@ ENTRYPOINT litefs mount
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential pkg-config python-is-python3
+
+# Install dotenvx
+RUN curl -sfS https://dotenvx.sh/install.sh | sh
 
 # Install node modules
 COPY bun.lockb package.json ./
@@ -59,4 +63,4 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+CMD ["bun", "run", "start" ]

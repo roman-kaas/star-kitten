@@ -44,14 +44,12 @@
     "winston": "^3.14.2"
   },
   "scripts": {
-    "dev": "bunx dotenvx run -- bun --watch src/main.ts",
-    "start": "bunx dotenvx run -f .env.production -- bun src/main.ts",
+    "dev": "bunx @dotenvx/dotenvx run -- bun --watch src/main.ts",
+    "start": "bunx @dotenvx/dotenvx run -f .env.production -- bun src/main.ts",
     "build": "mkdirp ./db && bun build --minify --sourcemap src/main.ts --target bun --outdir ./dist && bun run sentry:sourcemaps",
     "test": "bun test",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "vault:pull": "bunx --bun dotenv-vault@latest pull",
-    "vault:push": "bunx --bun dotenv-vault@latest push",
     "get-data": "bun run refresh:reference-data && bun run refresh:hoboleaks",
     "refresh:reference-data": "bun run ./downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ./data/reference-data",
     "refresh:hoboleaks": "bun run ./downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ./data/hoboleaks",

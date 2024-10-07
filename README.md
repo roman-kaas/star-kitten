@@ -54,7 +54,7 @@ LOG_LEVEL=debug
 
 # EVE
 EVE_CLIENT_ID=YOUR_EVE_CLIENT_ID
-EVE_SECRET=YOUR_EVE_SECRET
+EVE_CLIENT_SECRET=YOUR_EVE_SECRET
 EVE_CALLBACK_URL=http://localhost:3000/auth/callback
 ESI_USER_AGENT=ADD_YOUR_USER_AGENT_INFO_HERE
 
@@ -65,10 +65,7 @@ DISCORD_PUBLIC_KEY=YOUR_PUBLIC_KEY
 DISCORD_BOT_TOKEN=YOUR_BOT_TOKEN
 
 # ID of a test server to have immediate command refreshes
-DISCORD_GUILD_ID=YOUR_TEST_SERVER_ID
-# If the above guild id is set and REFRESH_GLOBAL_COMMANDS is true, then that server will
-# end up with duplicate commands. During dev, you can set this to false to prevent that.
-# Or if you're only running this on one server you don't need to do a global refresh.
-DISCORD_REFRESH_GLOBAL_COMMANDS=true
+DISCORD_TEST_GUILD_ID=YOUR_TEST_SERVER_ID
+
 
 ```

@@ -1,13 +1,53 @@
 
 export function cleanText(input: string): string {
-  return replaceBoldTextMarkup(removeColorTags(convertToDiscordLinks(input)));
+  return truncateText(
+    replaceBoldTextMarkup(
+      replaceItalicTextMarkup(
+        removeColorTags(
+          convertToDiscordLinks(
+            trimWhitespace(input)
+          )
+        )
+      )
+    )
+  );
+}
+
+export function truncateText(input: string, length: number = 1000): string {
+  return input.length > length ? input.substring(0, length) + '...' : input;
+}
+
+export function trimWhitespace(input: string): string {
+  return input.trim();
 }
 
 function replaceBoldTextMarkup(input: string): string {
-  // replace all <b>name</b> with **name** using regex
-  const regex = /<b>(.*?)<\/b>/g;
-  return input.replace(regex, '**$1**');
+  // replace all <b>name</b>, <b>name, and name</b> with **name** using regex
+  const regex = /<b>([^<]*)<\/b>|<b>([^<]*)|([^<]*)<\/b>/g;
+  return input.replace(regex, (match, p1, p2, p3) => {
+    if (p1) return `**${p1}**`;
+    if (p2) return `**${p2}**`;
+    if (p3) return `**${p3}**`;
+    return match;
+  });
 }
+
+function replaceItalicTextMarkup(input: string): string {
+  // replace all <i>name</i>, <i>name, and name</i> with *name* using regex
+  const regex = /<i>([^<]*)<\/i>|<i>([^<]*)|([^<]*)<\/i>/g;
+  return input.replace(regex, (match, p1, p2, p3) => {
+    if (p1) return `*${p1}*`;
+    if (p2) return `*${p2}*`;
+    if (p3) return `*${p3}*`;
+    return match;
+  });
+}
+
+// function replaceItalicTextMarkup(input: string): string {
+//   // replace all <i>name</i> with *name* using regex
+//   const regex = /<i>(.*?)<\/i>/g;
+//   return input.replace(regex, '*$1*');
+// }
 
 function removeColorTags(input: string): string {
   const regex = /<color=(?:0x)?([0-9a-fA-F]{6,8}|[a-zA-Z]+)>(.*?)<\/color>/g;

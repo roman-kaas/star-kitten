@@ -60,6 +60,15 @@ export const useNavigation = async ({
 
   const page = await getPage(currentPage, context);
   const pageContent = await page.content(context);
+  if (pageContent.type === 'page') {
+    try {
+      validateEmbeds(...(pageContent.embeds || []));
+      await initialInteraction.editReply(pageContent);
+    } catch (error) {
+      await initialInteraction.editReply(errorResponse(error.message));
+      return;
+    }
+  }
   const currentMessage = await initialInteraction.editReply({
     ...pageContent,
     fetchReply: true,

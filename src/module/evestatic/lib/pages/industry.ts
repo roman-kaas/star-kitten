@@ -1,10 +1,9 @@
 import { renderThreeColumns, type Page } from "$discord";
 import { EmbedBuilder } from "discord.js";
-import { buttonRow, type PageKey } from "../ship.command";
 import { getBlueprint, type ManufacturingActivity } from "$module/evestatic/models/blueprint";
 import { getType } from "$module/evestatic/models/type";
 import { getSchematic } from "$module/evestatic/models/schematic";
-import type { TypeContext } from "../type.command";
+import type { PageKey, TypeContext } from "../ItemLookup";
 
 export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -100,7 +99,7 @@ export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page
       return {
         type: 'page',
         embeds: [embed],
-        components: [buttonRow(key)],
+        components: [context.buildButtonRow(key, context)],
       };
     },
   }

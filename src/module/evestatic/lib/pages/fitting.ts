@@ -1,9 +1,8 @@
 import { EmbedBuilder } from "discord.js";
 import { renderThreeColumns, type Page } from "$discord";
 import { CommonAttribute } from "$module/evestatic/models/attribute";
-import { buttonRow, PageKey } from "../ship.command";
 import { getAttributeNames, getAttributeValues } from "./attributes";
-import type { TypeContext } from "../type.command";
+import { PageKey, type TypeContext } from "../ItemLookup";
 
 export function fittingPage(key: string = PageKey.FITTING, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -29,11 +28,23 @@ export function fittingPage(key: string = PageKey.FITTING, locale: string = 'en'
         ));
       }
 
+      // get variants
+      {
+        if (type.variants.length > 0) {
+          type.variants.map(v => {
+            fields.push({
+              name: `${v.metaGroup.name[locale] ?? v.metaGroup.name.en} variants`,
+              value: v.types.map(t => t.renderEveRefLink(locale)).join('\n'),
+            });
+          });
+        }
+      }
+
       if (fields.length === 0) {
         return {
           type: 'page',
           embeds: [embed.setDescription('This item does not have any fitting attributes.')],
-          components: [buttonRow(key)],
+          components: [context.buildButtonRow(key, context)],
         };
       }
 
@@ -41,7 +52,7 @@ export function fittingPage(key: string = PageKey.FITTING, locale: string = 'en'
       return {
         type: 'page',
         embeds: [embed],
-        components: [buttonRow(key)],
+        components: [context.buildButtonRow(key, context)],
       };
     },
   }

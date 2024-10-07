@@ -11,6 +11,7 @@ import { IconSize } from './icon';
 import { getUnit, type Unit } from './unit';
 import { type Attribute, CommonAttribute, getAttribute } from './attribute';
 import { getGroup } from './group';
+import { getMetaGroup } from './metaGroup';
 
 export const typeData: { [type_id: string]: Type } = jsonData as any;
 
@@ -64,7 +65,7 @@ export class Type {
   public readonly packaged_volume?: number;
   public readonly type_materials?: { [type_id: string]: MaterialIDQuantity };
   public readonly required_skills?: { [skill_type_id: string]: number }; // skill_type_id : level
-  public readonly type_variations?: { [variant: string]: number }; // variant : type_id
+  public readonly type_variations?: { [meta_group_id: string]: number[] }; // meta_group_id : type_ids[]
   public readonly produced_by_blueprints?: {
     [blueprint_type_id: string]: BlueprintTypeIDActivity;
   }; // blueprint_type_id : blueprint_activity
@@ -236,6 +237,13 @@ export class Type {
 
   get group() {
     return getGroup(this.group_id);
+  }
+
+  get variants() {
+    return Object.entries(this.type_variations || {}).map(([meta_group_id, variant_ids]) => ({
+      metaGroup: getMetaGroup(Number(meta_group_id)),
+      types: variant_ids.map((type_id) => getType(type_id)),
+    }));
   }
 }
 

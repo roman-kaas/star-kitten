@@ -1,11 +1,10 @@
 import { coloredText, renderThreeColumns, WHITE_SPACE, type Page } from "$discord";
 import { EmbedBuilder } from "discord.js";
-import { buttonRow, type PageKey } from "../ship.command";
 import type { Type } from "$module/evestatic/models/type";
 import { db } from "$module/auth";
 import { esi } from "$eve";
-import type { TypeContext } from "../../type.command";
 import { CommonCategory } from "$module/evestatic/models/category";
+import type { PageKey, TypeContext } from "../ItemLookup";
 
 function canUseText(type: Type) {
   const category = type.group.category.category_id;
@@ -36,7 +35,7 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
             .setURL(type.eveRefLink)
             .setFooter({ text: `id: ${type.type_id}` })
             .setColor('Green')],
-          components: [buttonRow(key)],
+          components: [context.buildButtonRow(key, context)],
         };
       }
 
@@ -71,7 +70,7 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
       return {
         type: 'page',
         embeds: [embed],
-        components: [buttonRow(key)],
+        components: [context.buildButtonRow(key, context)],
       };
     },
   }

@@ -34,7 +34,7 @@ export const enum PageKey {
 }
 
 export async function execute(interaction: CommandInteraction) {
-  let deferred = await interaction.deferReply();
+  let deferred = await interaction.deferReply({ ephemeral: true });
 
   const user = db.getUserByDiscordId(interaction.user.id);
 

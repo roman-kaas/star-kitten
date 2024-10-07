@@ -1,12 +1,9 @@
 import { renderThreeColumns, type Page } from "$discord";
 import { EmbedBuilder } from "discord.js";
-import { buttonRow, type PageKey } from "../ship.command";
 import { CommonAttribute } from "$module/evestatic/models/attribute";
 import type { Type } from "$module/evestatic/models/type";
-import type { TypeContext } from "../type.command";
-import { CommonCategory } from "$module/evestatic/models/category";
-
 import attributeOrders from '$data/hoboleaks/attributeOrders.json';
+import type { PageKey, TypeContext } from "../ItemLookup";
 
 export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -60,7 +57,7 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
       return {
         type: 'page',
         embeds,
-        components: [buttonRow(key)],
+        components: [context.buildButtonRow(key, context)],
       };
     },
   }

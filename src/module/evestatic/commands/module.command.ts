@@ -6,10 +6,10 @@ import { MarkgetGroupIds } from '$module/evestatic/lib/search';
 import { itemLookup } from '../lib/ItemLookup';
 
 export const data = new SlashCommandBuilder()
-  .setName('ship')
-  .setDescription('Get information about a ship')
-  .addStringOption((option) => option.setName('name').setDescription('The name of the ship').setRequired(true));
+  .setName('module')
+  .setDescription('Get information about a module')
+  .addStringOption((option) => option.setName('name').setDescription('The name of the module').setRequired(true));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  itemLookup(interaction, { category: MarkgetGroupIds.SHIPS, ephemeral: false, type: 'Ship' });
+  itemLookup(interaction, { category: MarkgetGroupIds.MODULES, ephemeral: false, type: 'Module' });
 }

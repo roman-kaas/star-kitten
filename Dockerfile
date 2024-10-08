@@ -32,8 +32,7 @@ ENTRYPOINT litefs mount
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential pkg-config python-is-python3
 
-# Install dotenvx
-RUN curl -sfS https://dotenvx.sh/install.sh | sh
+RUN bun add -g @dotenvx/dotenvx
 
 # Install node modules
 COPY bun.lockb package.json ./

@@ -1,7 +1,4 @@
-import {
-  SlashCommandBuilder,
-  ChatInputCommandInteraction,
-} from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { MarkgetGroupIds } from '$module/evestatic/lib/search';
 import { itemLookup } from '../lib/ItemLookup';
 

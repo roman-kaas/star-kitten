@@ -31,12 +31,8 @@ const defaultCacheDuration = 1000 * 60 * 15; // 15 minutes
 export async function esiFetch<T>(
   path: string,
   tokens?: EveTokens,
-  {
-    method = 'GET',
-    body,
-    noCache = false,
-    cacheDuration = defaultCacheDuration,
-  }: Partial<RequestOptions> = {}) {
+  { method = 'GET', body, noCache = false, cacheDuration = defaultCacheDuration }: Partial<RequestOptions> = {},
+) {
   try {
     const headers = {
       'User-Agent': global.App.config.eve.user_agent,
@@ -44,7 +40,6 @@ export async function esiFetch<T>(
     };
 
     if (tokens) {
-
       // check if the token is expired
       if (Date.now() > tokens.expires_in) {
         tokens = await refreshTokenAndUpdateCharacter(characterIdFromToken(tokens.access_token));
@@ -78,7 +73,9 @@ export async function esiFetch<T>(
 
     if (init.method === 'GET') {
       cache.set(url, {
-        expires: res.headers.get('expires') ? new Date(res.headers.get('expires')).getTime() : Date.now() + cacheDuration,
+        expires: res.headers.get('expires')
+          ? new Date(res.headers.get('expires')).getTime()
+          : Date.now() + cacheDuration,
         data,
       });
     }
@@ -89,6 +86,3 @@ export async function esiFetch<T>(
     return null;
   }
 }
-
-
-

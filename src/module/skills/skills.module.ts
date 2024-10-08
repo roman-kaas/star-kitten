@@ -18,16 +18,13 @@ const init = async () => {
   //   modelPattern: MODEL_PATTERN,
   //   modelPath: MODEL_DIR,
   // })
-}
+};
 
 export default {
   name: 'Skills',
-  description: 'View your character skills and skill queue. If enabled, will update other modules with skill data. eg. Manufacturing info, skill requirements...',
-  scopes: joinScopes(
-    ESI_SCOPES.PUBLIC_DATA,
-    ESI_SCOPES.SKILLS_READ_SKILLS,
-    ESI_SCOPES.SKILLS_READ_SKILLQUEUE,
-  ),
+  description:
+    'View your character skills and skill queue. If enabled, will update other modules with skill data. eg. Manufacturing info, skill requirements...',
+  scopes: joinScopes(ESI_SCOPES.PUBLIC_DATA, ESI_SCOPES.SKILLS_READ_SKILLS, ESI_SCOPES.SKILLS_READ_SKILLQUEUE),
   dependencies: ['Auth', 'Characters'],
   database: {
     name: DATABASE_KEY,

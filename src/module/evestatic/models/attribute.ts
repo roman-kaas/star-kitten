@@ -159,5 +159,4 @@ export enum CommonAttribute {
   UsedWithCharge1 = 604,
   UsedWithCharge2 = 605,
   ChargeSize = 128,
-
 }

@@ -1,5 +1,5 @@
-import { type Page } from "$discord";
-import { PageKey, type TypeContext } from "../ItemLookup";
+import { type Page } from '$discord';
+import { PageKey, type TypeContext } from '../ItemLookup';
 import { EmbedBuilder } from 'discord.js';
 import { fetchPrice } from '$eve/thirdParty/evetycoon';
 import { BREAKING_WHITE_SPACE, WHITE_SPACE } from '$discord/utils/embeds';
@@ -29,7 +29,12 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
           description += type.skillBonuses
             .map((bonus) => {
               return `\n\n**[${bonus.skill.name[locale] ?? bonus.skill.name.en}](${bonus.skill.eveRefLink}) bonuses (per skill level)**
-        ${bonus.bonuses.sort((a, b) => a.importance - b.importance).map((b) => `**${b.bonus}${b.unit?.display_name ?? '-'}** ${cleanText(b.bonus_text[locale] ?? b.bonus_text.en)}`).join('\n')}`;
+        ${bonus.bonuses
+          .sort((a, b) => a.importance - b.importance)
+          .map(
+            (b) => `**${b.bonus}${b.unit?.display_name ?? '-'}** ${cleanText(b.bonus_text[locale] ?? b.bonus_text.en)}`,
+          )
+          .join('\n')}`;
             })
             .join('\n');
         }
@@ -38,12 +43,14 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
           description += '\n### Role Bonuses\n';
           description += type.roleBonuses
             .sort((a, b) => a.importance - b.importance)
-            .map((b) => `**${b.bonus ?? ''}${b.unit?.display_name ?? '-'}** ${cleanText(b.bonus_text[locale] ?? b.bonus_text.en)}`)
+            .map(
+              (b) =>
+                `**${b.bonus ?? ''}${b.unit?.display_name ?? '-'}** ${cleanText(b.bonus_text[locale] ?? b.bonus_text.en)}`,
+            )
             .join('\n');
         }
         embed.setDescription(cleanText(description));
       }
-
 
       // --- FIELDS ---
 
@@ -81,7 +88,7 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
           fields.push({
             name: i == 0 ? 'Description' : WHITE_SPACE,
             value: cleanText(line),
-          })
+          });
         });
       }
 
@@ -93,5 +100,5 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
         components: [context.buildButtonRow(key, context)],
       };
     },
-  }
+  };
 }

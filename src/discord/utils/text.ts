@@ -1,15 +1,6 @@
-
 export function cleanText(input: string): string {
   return truncateText(
-    replaceBoldTextMarkup(
-      replaceItalicTextMarkup(
-        removeColorTags(
-          convertToDiscordLinks(
-            trimWhitespace(input)
-          )
-        )
-      )
-    )
+    replaceBoldTextMarkup(replaceItalicTextMarkup(removeColorTags(convertToDiscordLinks(trimWhitespace(input))))),
   );
 }
 
@@ -131,13 +122,13 @@ export function formatNumberToShortForm(number: number, locale: string = 'en-uS'
 export function coloredText(text: string, color: 'green' | 'blue' | 'red' | 'yellow'): string {
   switch (color) {
     case 'red':
-      return "```ansi\n[2;31m" + text + "[0m```\n";
+      return '```ansi\n[2;31m' + text + '[0m```\n';
     case 'blue':
-      return "```ansi\n[2;32m[2;36m[2;34m" + text + "[0m[2;36m[0m[2;32m[0m```\n";
+      return '```ansi\n[2;32m[2;36m[2;34m' + text + '[0m[2;36m[0m[2;32m[0m```\n';
     case 'yellow':
-      return "```ansi\n[2;33m" + text + "[0m```\n";
+      return '```ansi\n[2;33m' + text + '[0m```\n';
     case 'green':
-      return "```ansi\n[2;36m" + text + "[0m```\n";
+      return '```ansi\n[2;36m' + text + '[0m```\n';
   }
   return text;
 }

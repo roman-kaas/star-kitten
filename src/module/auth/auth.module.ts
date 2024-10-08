@@ -8,7 +8,7 @@ const init = async () => {
   if (didInit) return;
   didInit = true;
   await db.initializeDatabase();
-}
+};
 
 export default {
   name: 'Auth',

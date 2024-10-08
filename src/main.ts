@@ -1,5 +1,5 @@
 import { StarKitten } from '$lib/StarKitten';
-import * as Sentry from "@sentry/bun";
+import * as Sentry from '@sentry/bun';
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -15,4 +15,3 @@ process.on('unhandledRejection', (error) => {
   console.error('Unhandled promise rejection:', error);
   Sentry.captureException(error);
 });
-

@@ -1,7 +1,4 @@
-import {
-  SlashCommandBuilder,
-  CommandInteraction,
-} from 'discord.js';
+import { SlashCommandBuilder, CommandInteraction } from 'discord.js';
 import { useNavigation, confirmationPage, type Page } from '$discord';
 import { db, refreshTokenAndUpdateCharacter, User } from '$module/auth';
 import { scopesPage } from './pages/scopes';
@@ -57,7 +54,7 @@ export async function execute(interaction: CommandInteraction) {
       title: 'Revoke All Scopes',
       messageBuilder: (context: CharacterContext) => {
         const character = context.user.characters[context.characterIndex];
-        return `Are you sure you want to remove all scopes for ${character.name}?`
+        return `Are you sure you want to remove all scopes for ${character.name}?`;
       },
       cancelKey: PageKey.CANCEL_SCOPES,
       confirmKey: PageKey.REVOKE_NONPUBLIC_SCOPES,
@@ -77,35 +74,32 @@ export async function execute(interaction: CommandInteraction) {
         return PageKey.CHARACTER;
       case PageKey.CANCEL_SCOPES:
         return PageKey.SCOPES;
-      case PageKey.REVOKE_NONPUBLIC_SCOPES:
-        {
-          const character = context.user.characters[context.characterIndex];
-          await refreshTokenAndUpdateCharacter(character.id, 'publicData');
-          context.user = refresh();
-          return PageKey.CHARACTER;
-        }
-      case PageKey.REFRESH:
-        {
-          context.user = refresh();
-          return PageKey.CHARACTER;
-        }
-      case PageKey.DELETE:
-        {
-          const character = context.user.characters[context.characterIndex];
-          db.deleteModel(character);
-          context.characterIndex = Math.max(0, context.characterIndex - 1);
-          context.user.characters.splice(context.characterIndex, 1);
-          return context.user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER;
-        }
-      case PageKey.SET_MAIN:
-        {
-          const character = context.user.characters[context.characterIndex];
-          context.user.mainCharacter = character;
-          db.save(context.user);
-          context.user = refresh();
-          return PageKey.CHARACTER;
-        }
-      default: return key;
+      case PageKey.REVOKE_NONPUBLIC_SCOPES: {
+        const character = context.user.characters[context.characterIndex];
+        await refreshTokenAndUpdateCharacter(character.id, 'publicData');
+        context.user = refresh();
+        return PageKey.CHARACTER;
+      }
+      case PageKey.REFRESH: {
+        context.user = refresh();
+        return PageKey.CHARACTER;
+      }
+      case PageKey.DELETE: {
+        const character = context.user.characters[context.characterIndex];
+        db.deleteModel(character);
+        context.characterIndex = Math.max(0, context.characterIndex - 1);
+        context.user.characters.splice(context.characterIndex, 1);
+        return context.user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER;
+      }
+      case PageKey.SET_MAIN: {
+        const character = context.user.characters[context.characterIndex];
+        context.user.mainCharacter = character;
+        db.save(context.user);
+        context.user = refresh();
+        return PageKey.CHARACTER;
+      }
+      default:
+        return key;
     }
   };
 

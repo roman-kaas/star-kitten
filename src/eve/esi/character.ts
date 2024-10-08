@@ -29,12 +29,10 @@ export interface CharacterAffiliations {
 }
 
 export function getCharacterAffiliations(ids: number[]) {
-  return (
-    esiFetch<Partial<CharacterAffiliations>[]>(`/characters/affiliation/`, undefined, {
-      method: 'POST',
-      body: JSON.stringify(ids),
-    })
-  )[0] as Partial<CharacterAffiliations>;
+  return esiFetch<Partial<CharacterAffiliations>[]>(`/characters/affiliation/`, undefined, {
+    method: 'POST',
+    body: JSON.stringify(ids),
+  })[0] as Partial<CharacterAffiliations>;
 }
 
 export interface CharacterPortraits {
@@ -107,17 +105,17 @@ export interface Notification {
   text: string;
   timestamp: string;
   type:
-  | 'character'
-  | 'corporation'
-  | 'alliance'
-  | 'faction'
-  | 'inventory'
-  | 'industry'
-  | 'loyalty'
-  | 'skills'
-  | 'sov'
-  | 'structures'
-  | 'war';
+    | 'character'
+    | 'corporation'
+    | 'alliance'
+    | 'faction'
+    | 'inventory'
+    | 'industry'
+    | 'loyalty'
+    | 'skills'
+    | 'sov'
+    | 'structures'
+    | 'war';
 }
 
 // required scope: esi-characters.read_notifications.v1

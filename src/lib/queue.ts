@@ -14,7 +14,6 @@ export interface QueueItem {
 }
 
 export class Queue<DATA = any> {
-
   private db: Database;
 
   constructor(dbPath: string) {

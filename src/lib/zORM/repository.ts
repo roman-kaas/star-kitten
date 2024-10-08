@@ -70,7 +70,6 @@ export class Repository<T> {
   };
 
   public find = (queryFields: any, limit?: number, offset?: number, parent: any = null): T[] => {
-
     const query = Object.keys(queryFields)
       .map((key) => {
         return `${this.tableRegistry.dbColumns[key].dbKey} = ?`;

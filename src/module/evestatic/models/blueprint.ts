@@ -99,7 +99,6 @@ export class Blueprint {
       level,
     }));
   }
-
 }
 
 export const getBlueprint = (blueprint_type_id: number): Blueprint => new Blueprint(blueprint_type_id);

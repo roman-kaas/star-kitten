@@ -1,6 +1,6 @@
-import { DB } from "$lib/zORM";
-import { DATABASE_KEY, DB_PATH, MODEL_DIR, MODEL_PATTERN } from "../config";
-import { Character, User } from "../models";
+import { DB } from '$lib/zORM';
+import { DATABASE_KEY, DB_PATH, MODEL_DIR, MODEL_PATTERN } from '../config';
+import { Character, User } from '../models';
 
 export async function initializeDatabase() {
   await DB.getDB(DATABASE_KEY).initialize({
@@ -9,7 +9,7 @@ export async function initializeDatabase() {
     modelPath: MODEL_DIR,
     enableWal: true,
     enableForeignKeys: true,
-  })
+  });
 }
 
 export function getUser(id: number): User | undefined {

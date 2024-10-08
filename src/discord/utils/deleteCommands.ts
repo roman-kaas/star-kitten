@@ -14,7 +14,6 @@ interface Options {
  * @returns none
  */
 export async function deleteCommands(client: Client, options: Partial<Options> = {}) {
-
   const token = options.token || global.App.config.discord.token;
   const appId = options.appId || global.App.config.discord.appId;
 

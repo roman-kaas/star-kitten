@@ -2,7 +2,6 @@ import cronParser from 'cron-parser';
 import { Queue } from '$lib/queue';
 import { JobType, type Job } from './types';
 
-
 let queue: Queue<Job>;
 const workers: { [key: string]: Worker } = {};
 const MAX_DEQUEUE_DELAY = parseInt(process.env.MAX_DEQUEUE_DELAY || '1000');

@@ -1,7 +1,7 @@
-import { ButtonStyle, EmbedBuilder } from "discord.js";
-import { type Page, WHITE_SPACE, createActionRow } from "$discord";
-import type { AppModule } from "$lib/StarKitten";
-import { PageKey, type CharacterContext } from "../characters.command";
+import { ButtonStyle, EmbedBuilder } from 'discord.js';
+import { type Page, WHITE_SPACE, createActionRow } from '$discord';
+import type { AppModule } from '$lib/StarKitten';
+import { PageKey, type CharacterContext } from '../characters.command';
 
 export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
   return {
@@ -23,8 +23,10 @@ export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
         }
         let scopesText = '';
         scopesText += `### ${module.name} Module\n`;
-        scopesText += `*${module.description}* ` + "```" + moduleScopes.join('\n') + "```\n";
-        scopesText += character.hasAllScopes(moduleScopes) ? `:white_check_mark: You have all scopes! - [Remove ${module.name} Scopes](${removeScopesUrl(context.user.discordID, character.id, module.name).href})\n\n` : `:x: You are missing required scopes - [Add ${module.name} Scopes](${addScopesUrl(context.user.discordID, character.id, module.name).href})\n`;
+        scopesText += `*${module.description}* ` + '```' + moduleScopes.join('\n') + '```\n';
+        scopesText += character.hasAllScopes(moduleScopes)
+          ? `:white_check_mark: You have all scopes! - [Remove ${module.name} Scopes](${removeScopesUrl(context.user.discordID, character.id, module.name).href})\n\n`
+          : `:x: You are missing required scopes - [Add ${module.name} Scopes](${addScopesUrl(context.user.discordID, character.id, module.name).href})\n`;
 
         if (scopesText.length + description.length < 4096) {
           description += scopesText;
@@ -42,16 +44,21 @@ export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
       return {
         type: 'page',
         embeds,
-        components: [createActionRow(
-          { customId: PageKey.CHARACTER, label: 'Back' },
-          !character.isOnlyPublicScope && { customId: PageKey.CONFIRM_REVOKE_SCOPES, label: 'Revoke All Scopes', style: ButtonStyle.Danger },
-          { customId: PageKey.CONFIRM_DELETE, label: 'Logout', style: ButtonStyle.Danger },
-        )],
+        components: [
+          createActionRow(
+            { customId: PageKey.CHARACTER, label: 'Back' },
+            !character.isOnlyPublicScope && {
+              customId: PageKey.CONFIRM_REVOKE_SCOPES,
+              label: 'Revoke All Scopes',
+              style: ButtonStyle.Danger,
+            },
+            { customId: PageKey.CONFIRM_DELETE, label: 'Logout', style: ButtonStyle.Danger },
+          ),
+        ],
         ephemeral: true,
       };
     },
-  }
-
+  };
 }
 
 function addScopesUrl(discordID: string, characterID: number, moduleName: string) {

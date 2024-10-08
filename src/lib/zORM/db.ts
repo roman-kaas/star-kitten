@@ -40,8 +40,6 @@ export class DB {
       ...options,
     };
 
-
-
     if (!existsSync(dirname(this.options.database))) {
       console.error('Database directory not found ' + dirname(this.options.database));
       console.error('Database directory not found ' + this.options.database);
@@ -72,8 +70,8 @@ export class DB {
   }
 
   public getRepository(name: string): Repository<any>;
-  public getRepository<T>(model: { new(): T }): Repository<T>;
-  public getRepository(model: { new(): any } | string): Repository<any> {
+  public getRepository<T>(model: { new (): T }): Repository<T>;
+  public getRepository(model: { new (): any } | string): Repository<any> {
     const name = (typeof model === 'string' ? model : model.name).toLowerCase();
     if (this.repositories[name]) {
       return this.repositories[name];

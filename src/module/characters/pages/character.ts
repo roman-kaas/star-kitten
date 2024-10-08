@@ -1,8 +1,8 @@
-import { ButtonStyle, EmbedBuilder } from "discord.js";
+import { ButtonStyle, EmbedBuilder } from 'discord.js';
 import { createActionRow, type Page } from '$discord';
-import { PageKey, type CharacterContext } from "../characters.command";
-import { AllianceAPI, CharacterAPI, CorporationAPI } from "$eve/esi";
-import { format, formatDistanceToNow } from "date-fns";
+import { PageKey, type CharacterContext } from '../characters.command';
+import { AllianceAPI, CharacterAPI, CorporationAPI } from '$eve/esi';
+import { format, formatDistanceToNow } from 'date-fns';
 
 export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterContext> {
   return {
@@ -53,13 +53,23 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
       return {
         type: 'page',
         embeds: [embed],
-        components: [createActionRow(
-          { customId: PageKey.PREV, label: 'Previous', disabled: context.characterIndex === 0 },
-          { customId: PageKey.NEXT, label: 'Next', disabled: context.characterIndex === context.user.characters.length - 1 },
-          context.user.mainCharacter.id !== character.id && { customId: PageKey.SET_MAIN, label: 'Set Main', style: ButtonStyle.Success },
-          { customId: PageKey.SCOPES, label: 'Scopes', style: ButtonStyle.Secondary },
-          { label: 'Add', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.user.id}` },
-        )],
+        components: [
+          createActionRow(
+            { customId: PageKey.PREV, label: 'Previous', disabled: context.characterIndex === 0 },
+            {
+              customId: PageKey.NEXT,
+              label: 'Next',
+              disabled: context.characterIndex === context.user.characters.length - 1,
+            },
+            context.user.mainCharacter.id !== character.id && {
+              customId: PageKey.SET_MAIN,
+              label: 'Set Main',
+              style: ButtonStyle.Success,
+            },
+            { customId: PageKey.SCOPES, label: 'Scopes', style: ButtonStyle.Secondary },
+            { label: 'Add', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.user.id}` },
+          ),
+        ],
         ephemeral: true,
       };
     },

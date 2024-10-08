@@ -1,13 +1,8 @@
-import {
-  ButtonStyle,
-  ChatInputCommandInteraction,
-  CommandInteraction,
-} from 'discord.js';
+import { ButtonStyle, ChatInputCommandInteraction, CommandInteraction } from 'discord.js';
 import { MarkgetGroupIds, Search } from '../lib/search';
 import { createActionRow, useNavigation } from '$discord';
 import type { Type } from '../models/type';
 import { mainPage, attributesPage, fittingPage, skillsPage, industryPage } from './pages';
-
 
 export enum PageKey {
   MAIN = 'main',
@@ -47,12 +42,32 @@ export async function itemLookup(interaction: ChatInputCommandInteraction, optio
   const buildButtonRow = (key: string, context: TypeContext) => {
     return createActionRow(
       { customId: PageKey.MAIN, label: 'Main', style: ButtonStyle.Primary, disabled: key === PageKey.MAIN },
-      { customId: PageKey.ATTRIBUTES, label: 'Attributes', style: ButtonStyle.Primary, disabled: key === PageKey.ATTRIBUTES },
-      { customId: PageKey.FITTING, label: `Fitting${context.type.variants.length > 0 ? ' | Variants' : ''}`, style: ButtonStyle.Primary, disabled: key === PageKey.FITTING },
-      context.type.skills.length > 0 && { customId: PageKey.SKILLS, label: 'Skills', style: ButtonStyle.Primary, disabled: key === PageKey.SKILLS },
-      (context.type.blueprints.length > 0 || context.type.schematics.length > 0) && { customId: PageKey.INDUSTRY, label: 'Industry', style: ButtonStyle.Primary, disabled: key === PageKey.INDUSTRY },
+      {
+        customId: PageKey.ATTRIBUTES,
+        label: 'Attributes',
+        style: ButtonStyle.Primary,
+        disabled: key === PageKey.ATTRIBUTES,
+      },
+      {
+        customId: PageKey.FITTING,
+        label: `Fitting${context.type.variants.length > 0 ? ' | Variants' : ''}`,
+        style: ButtonStyle.Primary,
+        disabled: key === PageKey.FITTING,
+      },
+      context.type.skills.length > 0 && {
+        customId: PageKey.SKILLS,
+        label: 'Skills',
+        style: ButtonStyle.Primary,
+        disabled: key === PageKey.SKILLS,
+      },
+      (context.type.blueprints.length > 0 || context.type.schematics.length > 0) && {
+        customId: PageKey.INDUSTRY,
+        label: 'Industry',
+        style: ButtonStyle.Primary,
+        disabled: key === PageKey.INDUSTRY,
+      },
     );
-  }
+  };
 
   useNavigation({
     interaction: deferred.interaction as any,
@@ -68,4 +83,3 @@ export async function itemLookup(interaction: ChatInputCommandInteraction, optio
     updateContext,
   });
 }
-

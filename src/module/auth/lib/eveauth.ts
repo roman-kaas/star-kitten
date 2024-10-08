@@ -1,7 +1,6 @@
 import { refresh, validateToken } from '$eve/esi/auth';
 import * as db from './authDB';
 
-
 export async function refreshTokenAndUpdateCharacter(id: number, scopes?: string) {
   const character = await db.getCharacter(id);
   if (!character) {

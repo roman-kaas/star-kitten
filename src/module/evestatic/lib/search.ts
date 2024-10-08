@@ -1,6 +1,6 @@
-import MiniSearch from "minisearch";
-import { getMarketGroup } from "../models/marketGroup";
-import { getType, typeData, type Type } from "../models/type";
+import MiniSearch from 'minisearch';
+import { getMarketGroup } from '../models/marketGroup';
+import { getType, typeData, type Type } from '../models/type';
 
 export enum MarkgetGroupIds {
   Ships = 4,
@@ -11,7 +11,7 @@ export enum MarkgetGroupIds {
   Structures = 477,
   Apparel = 475,
   // SKILLBOOKS = 150,
-  All = 0
+  All = 0,
 }
 
 export class Search {
@@ -19,7 +19,6 @@ export class Search {
   private miniSearch: MiniSearch;
 
   private constructor(private readonly market_group_id: MarkgetGroupIds) {
-
     this.miniSearch = new MiniSearch({
       fields: ['name.en', 'name.de', 'name.fr', 'name.ru', 'name.ja', 'name.zh'],
       extractField: (type: Type, fieldName: string) => {
@@ -34,9 +33,7 @@ export class Search {
     });
 
     if (market_group_id === MarkgetGroupIds.All) {
-      const types = Object.values(typeData).filter(
-        (type) => type.published,
-      );
+      const types = Object.values(typeData).filter((type) => type.published);
       this.miniSearch.addAll(types);
     } else {
       const markgetGroup = getMarketGroup(market_group_id);

@@ -1,4 +1,4 @@
-import type { AppModule } from "$lib/StarKitten";
+import type { AppModule } from '$lib/StarKitten';
 import { MarkgetGroupIds, Search } from './lib/search';
 
 const init = async () => {

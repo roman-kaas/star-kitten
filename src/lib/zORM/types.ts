@@ -22,13 +22,13 @@ export interface HasMetaData {
   classname: string;
   type: MetaDataType;
   options?:
-  | ColumnDecoratorOptions
-  | RelationMetaDataOptions
-  | TableDecoratorOptions
-  | (ManyToOneDecoratorOptions & RelationMetaDataOptions)
-  | IndexMetaDataOptions
-  | CompositeIndexMetaDataOptions
-  | MultiRelationMetaDataOptions;
+    | ColumnDecoratorOptions
+    | RelationMetaDataOptions
+    | TableDecoratorOptions
+    | (ManyToOneDecoratorOptions & RelationMetaDataOptions)
+    | IndexMetaDataOptions
+    | CompositeIndexMetaDataOptions
+    | MultiRelationMetaDataOptions;
 }
 
 export interface HasColumnMetaData extends HasMetaData {

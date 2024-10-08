@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "@discordjs/builders";
+import { EmbedBuilder } from '@discordjs/builders';
 
 export const WHITE_SPACE = '    ';
 export const BREAKING_WHITE_SPACE = '\u200b';
@@ -13,29 +13,32 @@ export const MAX_AUTHOR_NAME_LENGTH = 256;
 export const MAX_EMBED_COUNT = 10;
 export const MAX_CHARACTERS = 6000;
 
-
 export interface ColumnFieldValues {
   name: string;
   values: string[];
   inline: boolean;
 }
 
-
 export const renderText = (text?: string, maxLength: number = MAX_FIELD_VALUE_LENGTH) => {
   if (!text || text === '') return BREAKING_WHITE_SPACE;
   return text.length <= maxLength ? text : text.substring(0, maxLength - 3) + '...';
-}
+};
 
-export const renderField = (name: string = BREAKING_WHITE_SPACE, value: string = BREAKING_WHITE_SPACE, inline: boolean = true) => {
+export const renderField = (
+  name: string = BREAKING_WHITE_SPACE,
+  value: string = BREAKING_WHITE_SPACE,
+  inline: boolean = true,
+) => {
   return {
     name: renderText(name),
     value: renderText(value),
     inline,
   };
-}
+};
 
-export const triplet = (...columns: [Partial<ColumnFieldValues>, Partial<ColumnFieldValues>, Partial<ColumnFieldValues>]) =>
-  columns.map((col) => renderField(col.name, col.values?.join('\n'), col.inline));
+export const triplet = (
+  ...columns: [Partial<ColumnFieldValues>, Partial<ColumnFieldValues>, Partial<ColumnFieldValues>]
+) => columns.map((col) => renderField(col.name, col.values?.join('\n'), col.inline));
 
 export function renderThreeColumns(title: string, col1: string[], col2: string[], col3: string[]) {
   const fields = [];
@@ -49,13 +52,20 @@ export function renderThreeColumns(title: string, col1: string[], col2: string[]
     counter[2] += col3[i]?.length ?? 0 + 2;
 
     // if any column exceeds max length, push to fields and reset counter
-    if (counter[0] > MAX_FIELD_VALUE_LENGTH || counter[1] > MAX_FIELD_VALUE_LENGTH || counter[2] > MAX_FIELD_VALUE_LENGTH || i > 9) {
+    if (
+      counter[0] > MAX_FIELD_VALUE_LENGTH ||
+      counter[1] > MAX_FIELD_VALUE_LENGTH ||
+      counter[2] > MAX_FIELD_VALUE_LENGTH ||
+      i > 9
+    ) {
       --i; // decrement since this iteration exceeds max length
-      fields.push(...triplet(
-        { values: col1.slice(0, i), name: first ? title : BREAKING_WHITE_SPACE },
-        { values: col2.slice(0, i) },
-        { values: col3.slice(0, i) }
-      ));
+      fields.push(
+        ...triplet(
+          { values: col1.slice(0, i), name: first ? title : BREAKING_WHITE_SPACE },
+          { values: col2.slice(0, i) },
+          { values: col3.slice(0, i) },
+        ),
+      );
       col1 = col1.slice(i);
       col2 = col2.slice(i);
       col3 = col3.slice(i);
@@ -65,11 +75,9 @@ export function renderThreeColumns(title: string, col1: string[], col2: string[]
       first = false;
       i = 0;
     } else if (i == col1.length - 1) {
-      fields.push(...triplet(
-        { values: col1, name: first ? title : BREAKING_WHITE_SPACE },
-        { values: col2 },
-        { values: col3 }
-      ));
+      fields.push(
+        ...triplet({ values: col1, name: first ? title : BREAKING_WHITE_SPACE }, { values: col2 }, { values: col3 }),
+      );
       break;
     }
   }
@@ -153,11 +161,12 @@ export function validateEmbeds(...embeds: EmbedBuilder[]) {
   }
 }
 
-
 export function errorEmbed(message: string) {
   return new EmbedBuilder()
     .setTitle('Oh No!')
-    .setDescription(`ERROR: Failed to generate response: "${message}"\n\nPlease notify the developer if you encounter this error.`)
+    .setDescription(
+      `ERROR: Failed to generate response: "${message}"\n\nPlease notify the developer if you encounter this error.`,
+    )
     .setColor(0xff0000)
     .setThumbnail('https://imgcdn.dev/i/FieM0');
 }

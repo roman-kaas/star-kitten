@@ -57,7 +57,7 @@ let eveAuthPublicKey: any;
 export async function validateToken(token: string) {
   if (!eveAuthPublicKey) {
     try {
-      const eveJWKS = await (await fetch('https://login.eveonline.com/oauth/jwks')).json() as { keys: any[] };
+      const eveJWKS = (await (await fetch('https://login.eveonline.com/oauth/jwks')).json()) as { keys: any[] };
       eveAuthPublicKey = jwkToPem(eveJWKS.keys[0]);
     } catch (err) {
       console.error(`failed to get EVE Auth public keys`, err);
@@ -96,4 +96,3 @@ export async function refresh(
   });
   return (await response.json()) as EveTokens;
 }
-

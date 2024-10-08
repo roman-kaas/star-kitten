@@ -22,8 +22,7 @@ import { designTypeToSqliteType } from './utils';
 import { Glob } from 'bun';
 
 export class Registry {
-  constructor() {
-  }
+  constructor() {}
 
   private metaDatas: HasMetaData[] = [];
   private classes: { [className: string]: new () => any } = {};

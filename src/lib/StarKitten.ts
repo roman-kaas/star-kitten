@@ -1,12 +1,12 @@
-import Elysia from "elysia";
-import html from "@elysiajs/html";
-import { Client as DjsClient, Collection, GatewayIntentBits, Events } from "discord.js";
+import Elysia from 'elysia';
+import html from '@elysiajs/html';
+import { Client as DjsClient, Collection, GatewayIntentBits, Events } from 'discord.js';
 import { logger } from '$lib';
-import { loadModules } from "$lib/utils";
+import { loadModules } from '$lib/utils';
 import { useFileRouting } from '$plugins';
 import { loadCommands, refreshCommands, type Command } from '$discord/utils';
-import { onReady, onSlashCommandInteraction } from "$discord/clientHandlers";
-import type { EveAuthOptions } from "$eve/esi/auth";
+import { onReady, onSlashCommandInteraction } from '$discord/clientHandlers';
+import type { EveAuthOptions } from '$eve/esi/auth';
 
 export interface AppOptions {
   debug: boolean;
@@ -19,7 +19,7 @@ export interface AppOptions {
     secret: string;
     testGuildId: string;
   };
-  eve: EveAuthOptions,
+  eve: EveAuthOptions;
 }
 
 export interface AppModule {
@@ -77,7 +77,6 @@ export class StarKitten {
       },
     };
 
-
     if (this.options.useLogger) {
       logger.init();
     }
@@ -118,7 +117,6 @@ export class StarKitten {
   }
 
   async start() {
-
     if (!this.didInit) {
       await this.init();
     }

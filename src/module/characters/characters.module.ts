@@ -12,8 +12,8 @@ const init = async () => {
     database: DB_PATH,
     modelPattern: MODEL_PATTERN,
     modelPath: MODEL_DIR,
-  })
-}
+  });
+};
 
 export default {
   name: 'Characters',

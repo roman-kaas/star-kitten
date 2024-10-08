@@ -1,9 +1,9 @@
-import { renderThreeColumns, type Page } from "$discord";
-import { EmbedBuilder } from "discord.js";
-import { CommonAttribute } from "$module/evestatic/models/attribute";
-import type { Type } from "$module/evestatic/models/type";
+import { renderThreeColumns, type Page } from '$discord';
+import { EmbedBuilder } from 'discord.js';
+import { CommonAttribute } from '$module/evestatic/models/attribute';
+import type { Type } from '$module/evestatic/models/type';
 import attributeOrders from '$data/hoboleaks/attributeOrders.json';
-import type { PageKey, TypeContext } from "../ItemLookup";
+import type { PageKey, TypeContext } from '../ItemLookup';
 
 export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -17,25 +17,32 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
         .setFooter({ text: `id: ${type.type_id}` })
         .setColor('Green');
 
-
       const fields = [];
 
-      const useOrders = type.group.category.category_id === 11 ? attributeOrders['11'] : type.group.category.category_id === 87 ? attributeOrders['87'] : attributeOrders.default;
+      const useOrders =
+        type.group.category.category_id === 11
+          ? attributeOrders['11']
+          : type.group.category.category_id === 87
+            ? attributeOrders['87']
+            : attributeOrders.default;
 
       Object.entries(useOrders).map((pair) => {
         const [attributePath, attrs] = pair;
-        const combined = attrs['groupedAttributes'] ? attrs.normalAttributes.concat(...(attrs['groupedAttributes']?.map(([name, id]) => id) ?? [])) : attrs.normalAttributes;
+        const combined = attrs['groupedAttributes']
+          ? attrs.normalAttributes.concat(...(attrs['groupedAttributes']?.map(([name, id]) => id) ?? []))
+          : attrs.normalAttributes;
         if (!type.hasAnyAttribute(combined)) return;
         const split = attributePath.split('/');
         const name = split[split.length - 1];
-        fields.push(...renderThreeColumns(
-          name,
-          getAttributeNames(type, combined, locale),
-          [],
-          getAttributeValues(type, combined, locale)
-        ));
+        fields.push(
+          ...renderThreeColumns(
+            name,
+            getAttributeNames(type, combined, locale),
+            [],
+            getAttributeValues(type, combined, locale),
+          ),
+        );
       });
-
 
       // for (const [name, attrs] of Object.entries(attrMap)) {
       //   if (!type.hasAnyAttribute(attrs)) continue;
@@ -60,7 +67,7 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
         components: [context.buildButtonRow(key, context)],
       };
     },
-  }
+  };
 }
 
 const structureAttrs = [
@@ -74,11 +81,7 @@ const structureAttrs = [
   CommonAttribute.StructureExplosiveResistance,
 ];
 
-const droneAttrs = [
-  CommonAttribute.CargoCapacity,
-  CommonAttribute.DroneBandwidth,
-  CommonAttribute.DroneCapacity,
-];
+const droneAttrs = [CommonAttribute.CargoCapacity, CommonAttribute.DroneBandwidth, CommonAttribute.DroneCapacity];
 
 const armorAttrs = [
   CommonAttribute.ArmorHitpoints,
@@ -103,10 +106,7 @@ const elResAttrs = [
   CommonAttribute.WeaponDisruptionResistance,
 ];
 
-const capAttrs = [
-  CommonAttribute.CapacitorCapacity,
-  CommonAttribute.CapacitorRechargeTime,
-];
+const capAttrs = [CommonAttribute.CapacitorCapacity, CommonAttribute.CapacitorRechargeTime];
 
 const targetAttrs = [
   CommonAttribute.MaxTargetRange,
@@ -129,10 +129,7 @@ const jumpAttrs = [
   CommonAttribute.COnduitJumpPassengerCapacity,
 ];
 
-const propAttrs = [
-  CommonAttribute.MaxVelocity,
-  CommonAttribute.WarpSpeed,
-];
+const propAttrs = [CommonAttribute.MaxVelocity, CommonAttribute.WarpSpeed];
 
 const weaponAttrs = [
   CommonAttribute.DamageMultiplier,
@@ -145,31 +142,34 @@ const weaponAttrs = [
   CommonAttribute.ChargeSize,
   CommonAttribute.UsedWithCharge1,
   CommonAttribute.UsedWithCharge2,
-]
+];
 
-const eWarAttrs = [
-  CommonAttribute.MaxVelocityBonus,
-]
-
+const eWarAttrs = [CommonAttribute.MaxVelocityBonus];
 
 const attrMap = {
-  'Weapon': weaponAttrs,
-  'Structure': structureAttrs,
-  'Armor': armorAttrs,
-  'Shield': shieldAttrs,
+  Weapon: weaponAttrs,
+  Structure: structureAttrs,
+  Armor: armorAttrs,
+  Shield: shieldAttrs,
   'Cargo | Drones': droneAttrs,
   'Electronic Resistances': elResAttrs,
-  'Capacitor': capAttrs,
-  'Targeting': targetAttrs,
+  Capacitor: capAttrs,
+  Targeting: targetAttrs,
   'Jump Drive Systems': jumpAttrs,
-  'Propulsion': propAttrs,
+  Propulsion: propAttrs,
   'Electronic Warfare': eWarAttrs,
 };
 
 export function getAttributeNames(type: Type, ids: number[], locale: string = 'en') {
-  return ids.map((id) => type.getAttribute(id)).filter(attr => !!attr).map((attr) => `> ${attr.attribute.display_name[locale] ?? attr.attribute.display_name.en}`);
+  return ids
+    .map((id) => type.getAttribute(id))
+    .filter((attr) => !!attr)
+    .map((attr) => `> ${attr.attribute.display_name[locale] ?? attr.attribute.display_name.en}`);
 }
 
 export function getAttributeValues(type: Type, ids: number[], locale: string = 'en') {
-  return ids.map((id) => type.getAttribute(id)).filter(attr => !!attr).map((attr) => `**${attr.attribute.unit?.renderValue(attr.value) ?? attr.value}**`);
+  return ids
+    .map((id) => type.getAttribute(id))
+    .filter((attr) => !!attr)
+    .map((attr) => `**${attr.attribute.unit?.renderValue(attr.value) ?? attr.value}**`);
 }

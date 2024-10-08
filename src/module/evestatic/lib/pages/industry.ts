@@ -1,9 +1,9 @@
-import { renderThreeColumns, type Page } from "$discord";
-import { EmbedBuilder } from "discord.js";
-import { getBlueprint, type ManufacturingActivity } from "$module/evestatic/models/blueprint";
-import { getType } from "$module/evestatic/models/type";
-import { getSchematic } from "$module/evestatic/models/schematic";
-import type { PageKey, TypeContext } from "../ItemLookup";
+import { renderThreeColumns, type Page } from '$discord';
+import { EmbedBuilder } from 'discord.js';
+import { getBlueprint, type ManufacturingActivity } from '$module/evestatic/models/blueprint';
+import { getType } from '$module/evestatic/models/type';
+import { getSchematic } from '$module/evestatic/models/schematic';
+import type { PageKey, TypeContext } from '../ItemLookup';
 
 export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -22,7 +22,7 @@ export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page
       const fields = [];
       const bps = type.blueprints;
       if (bps.length > 0) {
-        bps.map(bp => {
+        bps.map((bp) => {
           const type = bp.blueprint;
           const blueprint = getBlueprint(bp.blueprint.type_id);
           const activity = blueprint.activities[bp.activity];
@@ -40,12 +40,13 @@ export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page
           if (activity['materials']) {
             const manufacturing = activity as ManufacturingActivity;
             if (manufacturing.materials) {
-
               description += '### Materials\n```';
-              description += Object.values(manufacturing.materials).map(m => {
-                const t = getType(m.type_id);
-                return `${t.name[locale] ?? t.name.en} ${m.quantity}`;
-              }).join('\n');
+              description += Object.values(manufacturing.materials)
+                .map((m) => {
+                  const t = getType(m.type_id);
+                  return `${t.name[locale] ?? t.name.en} ${m.quantity}`;
+                })
+                .join('\n');
               description += '```';
 
               //   fields.push(...renderThreeColumns(
@@ -62,13 +63,12 @@ export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page
               //   ));
             }
           }
-
-        })
+        });
       }
 
       const schematics = type.schematics;
       if (schematics.length > 0) {
-        schematics.map(type => {
+        schematics.map((type) => {
           const schematic = getSchematic(type.type_id);
 
           fields.push({
@@ -76,18 +76,20 @@ export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page
             value: `[${type.name[locale] ?? type.name.en}](${type.eveRefLink})`,
           });
 
-          fields.push(...renderThreeColumns(
-            'Materials',
-            Object.values(schematic.materials).map(m => {
-              const t = getType(m.type_id);
-              return `[${t.name[locale] ?? t.name.en}](${t.eveRefLink})`;
-            }),
-            [],
-            Object.values(schematic.materials).map(m => {
-              return `x**${m.quantity}**`;
-            }),
-          ));
-        })
+          fields.push(
+            ...renderThreeColumns(
+              'Materials',
+              Object.values(schematic.materials).map((m) => {
+                const t = getType(m.type_id);
+                return `[${t.name[locale] ?? t.name.en}](${t.eveRefLink})`;
+              }),
+              [],
+              Object.values(schematic.materials).map((m) => {
+                return `x**${m.quantity}**`;
+              }),
+            ),
+          );
+        });
       }
 
       if (description === '') {
@@ -102,5 +104,5 @@ export function industryPage(key: PageKey.INDUSTRY, locale: string = 'en'): Page
         components: [context.buildButtonRow(key, context)],
       };
     },
-  }
+  };
 }

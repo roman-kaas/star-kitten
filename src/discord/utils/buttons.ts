@@ -1,4 +1,4 @@
-import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { ActionRow, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
 interface BaseBtnOpts {
   label: string;
@@ -27,7 +27,7 @@ export function createButton(options: ButtonOptions | LinkButtonOptions) {
 }
 
 export function createButtons(...options: (ButtonOptions | LinkButtonOptions)[]) {
-  return options.filter(b => !!b).map(createButton);
+  return options.filter((b) => !!b).map(createButton);
 }
 
 export function createActionRow(...options: (ButtonOptions | LinkButtonOptions)[]) {

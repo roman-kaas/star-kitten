@@ -44,7 +44,7 @@
     "winston": "^3.14.2"
   },
   "scripts": {
-    "dev": "bunx @dotenvx/dotenvx run -- bun --watch src/main.ts",
+    "dev": "bunx dotenvx run -f .env.development -- bun --watch src/main.ts",
     "start": "bunx @dotenvx/dotenvx run -f .env.production -- bun src/main.ts",
     "build": "mkdirp ./db && bun build --minify --sourcemap src/main.ts --target bun --outdir ./dist && bun run sentry:sourcemaps",
     "test": "bun test",

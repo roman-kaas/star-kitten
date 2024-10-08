@@ -33,10 +33,11 @@ export async function deleteCommands(client: Client, options: Partial<Options> =
 
   try {
     console.debug('Deleting application (/) commands.');
-    const response = await rest.put(
-      options.guildId ? Routes.applicationGuildCommands(appId, options.guildId) : Routes.applicationCommands(appId),
+    const response = await rest.put(Routes.applicationCommands(appId),
       { body: [] },
     );
+    console.debug(`response: ${response.status} ${response.statusText}`);
+    console.debug(`response: ${Object.entries(response)}`);
     console.debug('Successfully deleted application (/) commands.');
   } catch (error) {
     console.error(`Failed to delete application (/) commands: ${error}`);

@@ -52,6 +52,8 @@
     "format": "prettier --write .",
     "refresh-commands:dev": "bunx dotenvx run -f .env.development -- bun run src/refreshCommands.ts",
     "refresh-commands:prod": "bunx dotenvx run -f .env.production -- bun run src/refreshCommands.ts",
+    "delete-commands:dev": "bunx dotenvx run -f .env.development -- bun run src/deleteCommands.ts",
+    "delete-commands:prod": "bunx dotenvx run -f .env.production -- bun run src/deleteCommands.ts",
     "get-data": "bun run refresh:reference-data && bun run refresh:hoboleaks",
     "refresh:reference-data": "bun run ./downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ./data/reference-data",
     "refresh:hoboleaks": "bun run ./downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ./data/hoboleaks",

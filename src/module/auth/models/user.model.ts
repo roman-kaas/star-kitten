@@ -26,7 +26,7 @@ export class User {
     name: 'main_character',
     nullable: true,
   })
-  mainCharacter: Character;
+  mainCharacter?: Character;
 
   public User() {
     this.createdAt = new Date();

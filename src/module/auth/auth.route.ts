@@ -152,10 +152,12 @@ export default (app: Elysia) => {
             console.log(`Creating character: ${characterID}`);
             const data = await CharacterAPI.getCharacterPublicData(characterID);
             character = Character.create(characterID, data.name, user, token);
-            user.mainCharacter = character;
-            db.save(user);
             db.save(character);
             character = db.getCharacter(characterID);
+            if (user.mainCharacter === null) {
+              user.mainCharacter = character;
+              db.save(user);
+            }
           } else {
             character.accessToken = token.access_token;
             character.expiresAt = new Date(token.expires_in * 1000);

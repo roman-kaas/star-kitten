@@ -88,7 +88,12 @@ export async function execute(interaction: CommandInteraction) {
         const character = context.user.characters[context.characterIndex];
         db.deleteModel(character);
         context.characterIndex = Math.max(0, context.characterIndex - 1);
-        context.user.characters.splice(context.characterIndex, 1);
+        if (context.user.mainCharacter?.id === character.id) {
+          // set main to next character if there are any, or null
+          context.user.mainCharacter = context.user.characters[context.characterIndex] ?? null;
+          db.save(context.user);
+          context.user = refresh();
+        }
         return context.user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER;
       }
       case PageKey.SET_MAIN: {

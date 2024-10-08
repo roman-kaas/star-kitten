@@ -12,6 +12,8 @@ export async function initializeDatabase() {
   });
 }
 
+type AuthModel = User | Character;
+
 export function getUser(id: number): User | undefined {
   return DB.getDB(DATABASE_KEY).getRepository(User).findOne(id);
 }
@@ -24,10 +26,10 @@ export function getCharacter(id: number): Character | undefined {
   return DB.getDB(DATABASE_KEY).getRepository(Character).findOne(id);
 }
 
-export function save(model: { constructor: { name: string } }) {
+export function save(model: AuthModel) {
   return DB.getDB(DATABASE_KEY).getRepository(model.constructor.name).save(model);
 }
 
-export function deleteModel(model: { constructor: { name: string } }) {
-  return DB.getDB(DATABASE_KEY).getRepository(model.constructor.name).delete(model);
+export function deleteModel(model: AuthModel) {
+  return DB.getDB(DATABASE_KEY).getRepository(model.constructor.name).delete(model.id);
 }

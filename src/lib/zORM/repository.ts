@@ -98,6 +98,7 @@ export class Repository<T> {
 
   public delete = (id: any, parent: any = null) => {
     const query = `DELETE FROM ${this.tableRegistry.dbTable} WHERE id = ?`;
+    console.debug(`${query} ${id}`);
     const stmt = this.db.sqlite.prepare(query);
     stmt.run(id);
   };

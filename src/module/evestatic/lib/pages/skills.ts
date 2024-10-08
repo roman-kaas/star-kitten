@@ -43,11 +43,11 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
       }
 
       const user = db.getUserByDiscordId(context.interaction.user.id);
-      const characterSkills: { [key: number]: number } = user
+      const characterSkills: { [key: number]: number } = user.mainCharacter
         ? (await esi.getCharacterSkills(user.mainCharacter.id, user.mainCharacter.tokens))?.skills.reduce(
-            (acc, skill) => ({ ...acc, [skill.skill_id]: skill.trained_skill_level }),
-            {},
-          )
+          (acc, skill) => ({ ...acc, [skill.skill_id]: skill.trained_skill_level }),
+          {},
+        )
         : null;
 
       const embed = new EmbedBuilder()

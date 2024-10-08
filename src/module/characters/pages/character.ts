@@ -46,7 +46,7 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
           },
         )
         .setFooter({
-          text: `${context.characterIndex + 1}/${context.user.characters.length} -- id: ${character.id}${context.user.mainCharacter.id === character.id ? ' -- Main' : ''}`,
+          text: `${context.characterIndex + 1}/${context.user.characters.length} -- id: ${character.id}${context.user.mainCharacter?.id === character.id ? ' -- Main' : ''}`,
           iconURL: CharacterAPI.getPortraitURL(character.id),
         });
 
@@ -61,7 +61,7 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
               label: 'Next',
               disabled: context.characterIndex === context.user.characters.length - 1,
             },
-            context.user.mainCharacter.id !== character.id && {
+            context.user.mainCharacter?.id !== character.id && {
               customId: PageKey.SET_MAIN,
               label: 'Set Main',
               style: ButtonStyle.Success,

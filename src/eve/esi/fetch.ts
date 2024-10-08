@@ -1,7 +1,6 @@
 import { refreshTokenAndUpdateCharacter } from '$module/auth';
-import type { EveTokens } from './auth';
+import { characterIdFromToken, type EveTokens } from './auth';
 import { ESI_LATEST_URL } from './scopes';
-import { characterIdFromToken } from './utils';
 
 const cache = new Map<string, CacheItem>();
 

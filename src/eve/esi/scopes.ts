@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+
 export const EVE_JWKS_URL = 'https://login.eveonline.com/oauth/jwks';
 export const EVE_ISSUER = 'login.eveonline.com';
 export const EVE_AUDIENCE = 'eveonline';
@@ -78,4 +80,10 @@ export enum ESI_SCOPES {
   ALLIANCES_READ_CONTACTS = 'esi-alliances.read_contacts.v1',
   CHARACTERS_READ_FW_STATS = 'esi-characters.read_fw_stats.v1',
   CORPORATIONS_READ_FW_STATS = 'esi-corporations.read_fw_stats.v1',
+}
+
+export function tokenHasScopes(access_token: string, ...scopes: string[]) {
+  const decoded = jwtDecode(access_token) as { scp: string[] | string; };
+  let tokenScopes = typeof decoded.scp === 'string' ? [decoded.scp] : decoded.scp;
+  return scopes.every((scope) => tokenScopes.includes(scope));
 }

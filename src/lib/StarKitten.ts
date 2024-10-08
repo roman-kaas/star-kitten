@@ -4,7 +4,7 @@ import { Client as DjsClient, Collection, GatewayIntentBits, Events } from 'disc
 import { logger } from '$lib';
 import { loadModules } from '$lib/utils';
 import { useFileRouting } from '$plugins';
-import { loadCommands, refreshCommands, type Command } from '$discord/utils';
+import { loadCommands, type Command } from '$discord/utils';
 import { onReady, onSlashCommandInteraction } from '$discord/clientHandlers';
 import type { EveAuthOptions } from '$eve/esi/auth';
 
@@ -126,14 +126,6 @@ export class StarKitten {
     console.log(`Server is running on port ${this.options.port}`);
 
     return this;
-  }
-
-  refreshCommands() {
-    return refreshCommands(this.discord, {
-      token: this.options.discord.token,
-      appId: this.options.discord.appId,
-      guildId: this.options.discord.testGuildId,
-    });
   }
 
   refreshModules() {

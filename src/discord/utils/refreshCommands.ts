@@ -31,13 +31,14 @@ export async function refreshCommands(client: Client, options: Partial<Options> 
 
   const rest = new REST().setToken(client.token || token);
 
+  const refreshForGuild = process.env.NODE_ENV === 'development' && options.guildId && options.guildId !== '';
   try {
-    console.debug('Refreshing application (/) commands.');
+    console.debug(`Refreshing commands: ${JSON.stringify(client.commands.map((command) => command.data.toJSON()))}`);
     const response = await rest.put(
-      options.guildId ? Routes.applicationGuildCommands(appId, options.guildId) : Routes.applicationCommands(appId),
+      refreshForGuild ? Routes.applicationGuildCommands(appId, options.guildId) : Routes.applicationCommands(appId),
       { body: client.commands.map((command) => command.data.toJSON()) },
     );
-    console.debug('Successfully refreshed application (/) commands.');
+    console.debug(`Successfully refreshed ${refreshForGuild ? 'guild' : 'global'} application (/) commands.`);
   } catch (error) {
     console.error(`Failed to refresh application (/) commands: ${error}`);
   }

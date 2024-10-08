@@ -67,7 +67,7 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
               style: ButtonStyle.Success,
             },
             { customId: PageKey.SCOPES, label: 'Scopes', style: ButtonStyle.Secondary },
-            { label: 'Add', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.user.id}` },
+            { label: 'Add', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.discordID}` },
           ),
         ],
         ephemeral: true,

@@ -1,5 +1,6 @@
 import type { EveTokens } from './auth';
 import { esiFetch } from './fetch';
+import { tokenHasScopes } from './scopes';
 
 // PUBLIC APIS ---------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export interface AssetData {
 
 // required scope: esi-assets.read_corporation_assets.v1
 export async function getCorporationAssets(id: number, token: EveTokens) {
+  if (!tokenHasScopes(token.access_token, 'esi-assets.read_corporation_assets.v1')) return null;
   return await esiFetch<Partial<AssetData>[]>(`/corporations/${id}/assets/`, token);
 }
 
@@ -74,6 +76,7 @@ export interface AssetLocation {
 
 // required scope: esi-assets.read_corporation_assets.v1
 export async function getCorporationAssetLocations(id: number, token: EveTokens, ids: number[]) {
+  if (!tokenHasScopes(token.access_token, 'esi-assets.read_corporation_assets.v1')) return null;
   return await esiFetch<Partial<AssetLocation>[]>(`/corporations/${id}/assets/locations/`, token, {
     method: 'POST',
     body: JSON.stringify(ids),
@@ -87,6 +90,7 @@ export interface AssetNames {
 
 // required scope: esi-assets.read_corporation_assets.v1
 export async function getCorporationAssetNames(id: number, token: EveTokens, ids: number[]) {
+  if (!tokenHasScopes(token.access_token, 'esi-assets.read_corporation_assets.v1')) return null;
   return await esiFetch<Partial<AssetNames>[]>(`/corporations/${id}/assets/names/`, token, {
     method: 'POST',
     body: JSON.stringify(ids),

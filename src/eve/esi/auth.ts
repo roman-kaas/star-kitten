@@ -1,6 +1,7 @@
 import { generateState } from 'oslo/oauth2';
 import jwt from 'jsonwebtoken';
 import jwkToPem from 'jwk-to-pem';
+import { jwtDecode } from 'jwt-decode';
 
 export interface EveAuthOptions {
   scopes?: string; // default scopes
@@ -95,4 +96,9 @@ export async function refresh(
     body: new URLSearchParams(params),
   });
   return (await response.json()) as EveTokens;
+}
+
+export function characterIdFromToken(token: string) {
+  const payload = jwtDecode(token);
+  return parseInt(payload.sub.split(':')[2]);
 }

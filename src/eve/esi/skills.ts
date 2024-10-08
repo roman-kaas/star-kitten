@@ -1,5 +1,6 @@
 import type { EveTokens } from './auth';
 import { esiFetch } from './fetch';
+import { tokenHasScopes } from './scopes';
 
 export interface CharacterAttributes {
   charisma: number;
@@ -14,6 +15,7 @@ export interface CharacterAttributes {
 
 // required scope: esi-skills.read_skills.v1
 export function getCharacterAttributes(id: number, token: EveTokens) {
+  if (!tokenHasScopes(token.access_token, 'esi-skills.read_skills.v1')) return null;
   return esiFetch<CharacterAttributes>(`/characters/${id}/attributes`, token);
 }
 
@@ -30,6 +32,7 @@ export interface SkillQueueItem {
 
 // required scope: esi-skills.read_skillqueue.v1
 export function getCharacterSkillQueue(id: number, token: EveTokens) {
+  if (!tokenHasScopes(token.access_token, 'esi-skills.read_skillqueue.v1')) return null;
   return esiFetch<SkillQueueItem[]>(`/characters/${id}/skillqueue`, token);
 }
 
@@ -48,5 +51,6 @@ export interface CharacterSkills {
 
 // required scope: esi-skills.read_skills.v1
 export function getCharacterSkills(id: number, token: EveTokens) {
+  if (!tokenHasScopes(token.access_token, 'esi-skills.read_skills.v1')) return null;
   return esiFetch<CharacterSkills>(`/characters/${id}/skills`, token);
 }

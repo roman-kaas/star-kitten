@@ -1,5 +1,5 @@
 import { ButtonStyle, EmbedBuilder } from 'discord.js';
-import { type Page, WHITE_SPACE, createActionRow } from '$discord';
+import { type Page, WHITE_SPACE, createActionRow } from '$lib/discord';
 import type { AppModule } from '$lib/StarKitten';
 import { PageKey, type CharacterContext } from '../characters.command';
 

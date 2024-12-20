@@ -5,7 +5,7 @@ import { join } from 'node:path';
 export default {
   name: 'Manufacturing',
   description: 'Industry and manufacturing related commands.',
-  dependencies: ['Auth', 'Characters'],
+  dependencies: ['Auth', 'Characters', 'EveStatic'],
   scopes: joinScopes(
     ESI_SCOPES.PUBLIC_DATA,
     ESI_SCOPES.ASSETS_READ_ASSETS,

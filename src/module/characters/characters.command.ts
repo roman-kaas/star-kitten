@@ -1,10 +1,12 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js';
-import { useNavigation, confirmationPage, type Page } from '$discord';
+import { useNavigation, confirmationPage, type Page, type ResumeableInteraction } from '$lib/discord';
 import { db, refreshTokenAndUpdateCharacter, User } from '$module/auth';
 import { scopesPage } from './pages/scopes';
 import { characterPage } from './pages/character';
 import { emptyPage } from './pages/empty';
+import { ResumeCommand } from '$lib/discord/utils/navigation/resumeCommand.model';
 
+const COMMAND = 'characters';
 export interface CharacterContext {
   characterIndex: number;
   user: User;
@@ -12,7 +14,7 @@ export interface CharacterContext {
   disabled?: boolean;
 }
 
-export const data = new SlashCommandBuilder().setName('characters').setDescription('Manage your characters');
+export const data = new SlashCommandBuilder().setName(COMMAND).setDescription('Manage your characters');
 
 export const enum PageKey {
   EMPTY = 'empty', // when no user exists or no characters are found for a user
@@ -31,7 +33,17 @@ export const enum PageKey {
 }
 
 export async function execute(interaction: CommandInteraction) {
-  let deferred = await interaction.deferReply({ ephemeral: true });
+  renderCharacters(interaction);
+}
+
+export async function resume(interaction: ResumeableInteraction, params: any, context: any) {
+  renderCharacters(interaction, context);
+}
+
+async function renderCharacters(interaction: CommandInteraction | ResumeableInteraction, context: any = {}) {
+  if (interaction.isCommand()) {
+    interaction = (await interaction.deferReply({ ephemeral: true })).interaction as any;
+  }
 
   const user = db.getUserByDiscordId(interaction.user.id);
 
@@ -108,15 +120,23 @@ export async function execute(interaction: CommandInteraction) {
     }
   };
 
+  let ctx = {
+    characterIndex: 0,
+    user,
+    discordID: interaction.user.id,
+    ...context,
+  }
+
+  console.debug(`User: ${ctx.user?.id}, Discord: ${ctx.discordID}, Character: ${ctx.characterIndex}`);
+
   useNavigation({
-    interaction: deferred.interaction as any,
+    interaction,
     pages,
     key: !user || user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER,
-    context: {
-      characterIndex: 0,
-      user,
-      discordID: interaction.user.id,
-    },
+    context: ctx,
     updateContext,
+    saveResume: (messageId, context) => {
+      App.db.save(ResumeCommand.create(messageId, COMMAND, {}, { characterIndex: context.characterIndex }));
+    }
   });
 }

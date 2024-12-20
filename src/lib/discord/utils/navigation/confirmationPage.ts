@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
-import type { Page } from './navigation';
+import type { Page } from '.';
 
 interface ConfirmationPage {
   key: string;

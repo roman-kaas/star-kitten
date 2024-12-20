@@ -1,5 +1,5 @@
 import jsonData from '$data/reference-data/units.json';
-import { convertMillisecondsToTimeString, convertSecondsToTimeString } from '$discord';
+import { convertMillisecondsToTimeString, convertSecondsToTimeString } from '$lib/discord';
 import { getGroup } from './group';
 import type { LocalizedString } from './sharedTypes';
 import { getType } from './type';

@@ -42,6 +42,8 @@ export function convertToSql(value: any, type: string): any {
       return Buffer.from(value);
     case 'NULL':
       return null;
+    case 'BIGINT':
+      return BigInt(value);
   }
 }
 
@@ -63,6 +65,8 @@ export function convertFromSql(value: any, type: string): any {
       return new Uint8Array(value);
     case 'null':
       return null;
+    case 'bigint':
+      return BigInt(value);
   }
 }
 
@@ -82,6 +86,8 @@ export function designTypeToSqliteType(designType: any) {
       return 'BLOB';
     case 'uint8array':
       return 'BLOB';
+    case 'bigint':
+      return 'BIGINT';
   }
   return 'NULL';
 }

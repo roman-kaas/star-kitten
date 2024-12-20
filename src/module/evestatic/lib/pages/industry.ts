@@ -1,4 +1,4 @@
-import { renderThreeColumns, type Page } from '$discord';
+import { renderThreeColumns, type Page } from '$lib/discord';
 import { EmbedBuilder } from 'discord.js';
 import { getBlueprint, type ManufacturingActivity } from '$module/evestatic/models/blueprint';
 import { getType } from '$module/evestatic/models/type';

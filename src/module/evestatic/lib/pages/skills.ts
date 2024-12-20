@@ -1,4 +1,4 @@
-import { coloredText, renderThreeColumns, WHITE_SPACE, type Page } from '$discord';
+import { coloredText, renderThreeColumns, WHITE_SPACE, type Page } from '$lib/discord';
 import { EmbedBuilder } from 'discord.js';
 import type { Type } from '$module/evestatic/models/type';
 import { db } from '$module/auth';
@@ -43,7 +43,7 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
       }
 
       const user = db.getUserByDiscordId(context.interaction.user.id);
-      const characterSkills: { [key: number]: number } = user.mainCharacter
+      const characterSkills: { [key: number]: number } = user?.mainCharacter
         ? (await esi.getCharacterSkills(user.mainCharacter.id, user.mainCharacter.tokens))?.skills.reduce(
           (acc, skill) => ({ ...acc, [skill.skill_id]: skill.trained_skill_level }),
           {},

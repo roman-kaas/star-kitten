@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { renderThreeColumns, type Page } from '$discord';
+import { renderThreeColumns, type Page } from '$lib/discord';
 import { CommonAttribute } from '$module/evestatic/models/attribute';
 import { getAttributeNames, getAttributeValues } from './attributes';
 import { PageKey, type TypeContext } from '../ItemLookup';

@@ -35,6 +35,7 @@ export class Repository<T> {
     }
 
     const query = `CREATE TABLE IF NOT EXISTS ${this.tableRegistry.dbTable} (${cols.join(', ')}${fks.length ? ', ' + fks.join(', ') : ''})`;
+    console.debug(query);
     this.db.sqlite.exec(query);
   };
 

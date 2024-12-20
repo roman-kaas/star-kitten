@@ -1,9 +1,9 @@
-import { type Page } from '$discord';
+import { type Page } from '$lib/discord';
 import { PageKey, type TypeContext } from '../ItemLookup';
 import { EmbedBuilder } from 'discord.js';
 import { fetchPrice } from '$eve/thirdParty/evetycoon';
-import { BREAKING_WHITE_SPACE, WHITE_SPACE } from '$discord/utils/embeds';
-import { cleanText, formatNumberToShortForm } from '$discord';
+import { BREAKING_WHITE_SPACE, WHITE_SPACE } from '$lib/discord/utils/embeds';
+import { cleanText, formatNumberToShortForm } from '$lib/discord';
 
 export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -30,11 +30,11 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
             .map((bonus) => {
               return `\n\n**[${bonus.skill.name[locale] ?? bonus.skill.name.en}](${bonus.skill.eveRefLink}) bonuses (per skill level)**
         ${bonus.bonuses
-          .sort((a, b) => a.importance - b.importance)
-          .map(
-            (b) => `**${b.bonus}${b.unit?.display_name ?? '-'}** ${cleanText(b.bonus_text[locale] ?? b.bonus_text.en)}`,
-          )
-          .join('\n')}`;
+                  .sort((a, b) => a.importance - b.importance)
+                  .map(
+                    (b) => `**${b.bonus}${b.unit?.display_name ?? '-'}** ${cleanText(b.bonus_text[locale] ?? b.bonus_text.en)}`,
+                  )
+                  .join('\n')}`;
             })
             .join('\n');
         }

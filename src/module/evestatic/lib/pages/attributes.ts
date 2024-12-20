@@ -1,4 +1,4 @@
-import { renderThreeColumns, type Page } from '$discord';
+import { renderThreeColumns, type Page } from '$lib/discord';
 import { EmbedBuilder } from 'discord.js';
 import { CommonAttribute } from '$module/evestatic/models/attribute';
 import type { Type } from '$module/evestatic/models/type';

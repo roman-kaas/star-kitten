@@ -178,3 +178,5 @@ brainstorming/
 
 # Sentry Config File
 .sentryclirc
+
+cloudflared.exe

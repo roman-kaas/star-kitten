@@ -1,11 +1,20 @@
 import { Glob } from 'bun';
 import { join } from 'node:path';
-import { Collection, type SlashCommandBuilder, type CommandInteraction } from 'discord.js';
+import {
+  Collection,
+  type SlashCommandBuilder,
+  type CommandInteraction,
+  type AnySelectMenuInteraction,
+  type ButtonInteraction,
+} from 'discord.js';
 
 export interface Command {
   data: SlashCommandBuilder;
   execute(interaction: CommandInteraction): Promise<void>;
+  resume?(message: ResumeableInteraction, params: any, context: any): Promise<void>;
 }
+
+export type ResumeableInteraction = AnySelectMenuInteraction | ButtonInteraction;
 
 interface Options {
   commandDir?: string; // default: './src'

@@ -1,4 +1,4 @@
-import { deleteCommands } from "$discord";
+import { deleteCommands } from "$lib/discord";
 import { Client as DjsClient, GatewayIntentBits } from "discord.js";
 
 const token = process.env.DISCORD_BOT_TOKEN;

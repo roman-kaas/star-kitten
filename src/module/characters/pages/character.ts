@@ -1,5 +1,5 @@
 import { ButtonStyle, EmbedBuilder } from 'discord.js';
-import { createActionRow, type Page } from '$discord';
+import { createActionRow, type Page } from '$lib/discord';
 import { PageKey, type CharacterContext } from '../characters.command';
 import { AllianceAPI, CharacterAPI, CorporationAPI } from '$eve/esi';
 import { format, formatDistanceToNow } from 'date-fns';

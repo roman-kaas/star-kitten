@@ -4,9 +4,10 @@ import { Client as DjsClient, Collection, GatewayIntentBits, Events } from 'disc
 import { logger } from '$lib';
 import { loadModules } from '$lib/utils';
 import { useFileRouting } from '$plugins';
-import { loadCommands, type Command } from '$discord/utils';
-import { onReady, onSlashCommandInteraction } from '$discord/clientHandlers';
+import { loadCommands, type Command } from '$lib/discord/utils';
+import { onReady, onSlashCommandInteraction } from '$lib/discord/clientHandlers';
 import type { EveAuthOptions } from '$eve/esi/auth';
+import * as kittenDB from '$lib/kittenDB';
 
 export interface AppOptions {
   debug: boolean;
@@ -42,6 +43,8 @@ export class StarKitten {
   commands: Collection<string, Command>;
   router: Elysia;
   discord: Client;
+
+  kittenDB: typeof kittenDB;
 
   private didInit: boolean = false;
 
@@ -81,11 +84,18 @@ export class StarKitten {
       logger.init();
     }
 
+    await kittenDB.initializeDatabase();
+
     this.modules = await loadModules();
 
     this.router = new Elysia()
       .use(html())
       .use(useFileRouting)
+      .get('/', () => {
+        return `<h1>Welcome to Star Kitten DEV</h1>
+        <br>
+        <iframe src='https://zkillboard.com/' width='100%' height='1000px'></iframe>`;
+      })
       .onError(({ code, set }) => {
         set.headers = { 'Content-Type': 'text/html' };
         switch (code) {
@@ -105,6 +115,7 @@ export class StarKitten {
     this.discord = new DjsClient({
       intents: [GatewayIntentBits.Guilds],
     }) as Client;
+    this.discord.collectors = new Collection<string, boolean>();
     this.discord.commands = await loadCommands({
       commands: new Collection(),
       commandDir: 'src',
@@ -138,5 +149,9 @@ export class StarKitten {
 
   get config() {
     return this.options;
+  }
+
+  get db() {
+    return kittenDB;
   }
 }

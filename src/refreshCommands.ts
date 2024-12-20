@@ -1,4 +1,4 @@
-import { loadCommands, refreshCommands } from "$discord";
+import { loadCommands, refreshCommands } from "$lib/discord";
 import { Client as DjsClient, Collection, GatewayIntentBits } from "discord.js";
 
 const token = process.env.DISCORD_BOT_TOKEN;

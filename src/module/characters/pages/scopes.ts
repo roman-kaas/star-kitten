@@ -47,6 +47,7 @@ export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
         components: [
           createActionRow(
             { customId: PageKey.CHARACTER, label: 'Back' },
+            { customId: PageKey.SCOPES, style: ButtonStyle.Secondary, label: 'Refresh' },
             !character.isOnlyPublicScope && {
               customId: PageKey.CONFIRM_REVOKE_SCOPES,
               label: 'Revoke All Scopes',

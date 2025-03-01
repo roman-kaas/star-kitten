@@ -161,7 +161,7 @@ export class Type {
   }
 
   get roleBonuses() {
-    if (!this.traits) return [];
+    if (!this.traits || !this.traits.role_bonuses) return [];
     const bonuses = [];
     for (const bonus of Object.values(this.traits.role_bonuses)) {
       bonuses.push({

@@ -131,6 +131,7 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
       }
       default:
         await getAndRefreshCharacter();
+        refreshUser();
         return key;
     }
   };

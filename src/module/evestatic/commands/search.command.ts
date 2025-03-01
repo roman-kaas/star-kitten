@@ -7,22 +7,11 @@ import type { ResumeableInteraction } from '$lib/discord';
 export const data = new SlashCommandBuilder()
   .setName('search')
   .setDescription('Get info about EVE things.')
-  .addNumberOption((options) =>
-    options
-      .setName('category')
-      .setDescription('The category of the thing you want to search for.')
-      .setRequired(true)
-      .addChoices(
-        ...Object.entries(MarkgetGroupIds)
-          .filter(([name, value]) => typeof value !== 'string')
-          .map(([name, value]) => ({ name, value: parseInt(value as any) })),
-      ),
-  )
   .addStringOption((option) => option.setName('name').setDescription('The type name').setRequired(true))
   .addBooleanOption((option) => option.setName('public').setDescription('Should the response be publicly visible in the channel so everyone can see it?').setRequired(false));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  const category = interaction.options.getNumber('category');
+  const category = MarkgetGroupIds.All;
   const isPublic = interaction.options.getBoolean('public') ?? false;
   return itemLookup(interaction, { category, ephemeral: !isPublic, type: 'Type' }, (messageId: string) => {
     App.db.save(ResumeCommand.create(messageId, 'search', { category, name: interaction.options.getString('name') ?? '' }));

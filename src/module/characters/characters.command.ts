@@ -78,6 +78,9 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
     const refreshUser = () => context.user = db.getUserByDiscordId(interaction.user.id);
     
     const getAndRefreshCharacter = async () => {
+      if (!context.user ||!context.user.characters || context.user.characters.length === 0) {
+        return;
+      }
       const character = context.user.characters[context.characterIndex];
       if (!character.validToken) {
         await refreshTokenAndUpdateCharacter(character.id, character.scopes);

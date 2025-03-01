@@ -22,11 +22,18 @@ export function emptyPage(key: string = PageKey.EMPTY): Page<CharacterContext> {
         type: 'page',
         embeds: [embed],
         components: [
-          createActionRow({
+          createActionRow(
+            {
             label: 'Add',
             style: ButtonStyle.Link,
             url: `${global.App.config.baseUrl}/auth/${context.discordID}`,
-          }),
+          },
+          {
+            label: 'Refresh',
+            style: ButtonStyle.Secondary,
+            customId: PageKey.CHARACTER,
+          }
+          ),
         ],
         ephemeral: true,
       };

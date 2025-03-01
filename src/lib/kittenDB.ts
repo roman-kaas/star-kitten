@@ -3,7 +3,7 @@ import { ResumeCommand } from '$lib/discord/utils/navigation/resumeCommand.model
 import { join } from 'node:path';
 
 const DATABASE_KEY = 'kitten';
-const DB_PATH = process.env.KITTEN_DB_PATH || join(process.cwd(), 'litefs/kitten.db');
+const DB_PATH = process.env.AUTH_DB_PATH || join(process.cwd(), 'litefs/kitten.db');
 const MODEL_DIR = __dirname;
 const MODEL_PATTERN = '**/*.model.ts';
 

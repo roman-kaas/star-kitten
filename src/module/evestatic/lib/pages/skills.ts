@@ -54,7 +54,7 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
         .setTitle(type.name[locale] ?? type.name.en)
         .setThumbnail(type.iconUrl)
         .setURL(type.eveRefLink)
-        .setFooter({ text: `id: ${type.type_id} -- ▣ = trained | ◼ = required` });
+        .setFooter({ text: `id: ${type.type_id} -- ◼ = trained | ☒ = required but not trained` });
 
       let description = '';
 
@@ -128,7 +128,7 @@ function getSkillLevels(type: Type, skills?: { [key: number]: number }): Require
 function renderLevel(level: RequiredLevel) {
   let str = '';
   for (let i = 1; i <= 5; ++i) {
-    str += i <= level.required ? (level.have >= i ? '▣' : '◼') : level.have >= i ? '▣' : '▢';
+    str += i <= level.required ? (level.have >= i ? '◼' : '☒') : level.have >= i ? '◼' : '▢';
     // shapes to test with:
     // '■' '▰' '▱' '▨' '▧' '◼' '▦' '▩' '▥' '▤' '▣' '▢' '◪' '◫' '◩' '◨' '◧'
   }

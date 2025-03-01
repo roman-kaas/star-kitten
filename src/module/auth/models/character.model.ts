@@ -25,6 +25,10 @@ export class Character {
   @Column()
   name: string;
 
+  get validToken() {
+    return new Date() < this.expiresAt;
+  };
+
   static create(id: number, name: string, user: User, tokens: EveTokens) {
     const character = new Character();
     character.id = id;

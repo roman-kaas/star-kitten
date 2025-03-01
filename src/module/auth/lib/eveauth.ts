@@ -1,14 +1,21 @@
 import { refresh, validateToken } from '$eve/esi/auth';
 import * as db from './authDB';
 
-export async function refreshTokenAndUpdateCharacter(id: number, scopes?: string) {
+export async function refreshTokenAndUpdateCharacter(id: number, scopes: string[] | string) {
   const character = await db.getCharacter(id);
   if (!character) {
     console.error(`Character not found for id ${id}`);
     return;
   }
 
-  const tokens = await refresh({ refresh_token: character.refreshToken }, { ...global.App.config.eve, scopes });
+  const tokens = await refresh(
+    { 
+      refresh_token: character.refreshToken 
+    }, {
+      ...global.App.config.eve, 
+      scopes: Array.isArray(scopes) ? scopes.join(' ') : scopes 
+    });
+
   const decoded = await validateToken(tokens.access_token);
   if (!decoded) {
     console.error(`Failed to validate token for character ${id}`);

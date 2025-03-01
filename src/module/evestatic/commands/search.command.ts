@@ -6,11 +6,11 @@ import type { ResumeableInteraction } from '$lib/discord';
 
 export const data = new SlashCommandBuilder()
   .setName('search')
-  .setDescription('Get detailed information about nearly any item in game.')
+  .setDescription('Get info about EVE things.')
   .addNumberOption((options) =>
     options
       .setName('category')
-      .setDescription('The category of the item')
+      .setDescription('The category of the thing you want to search for.')
       .setRequired(true)
       .addChoices(
         ...Object.entries(MarkgetGroupIds)
@@ -19,12 +19,12 @@ export const data = new SlashCommandBuilder()
       ),
   )
   .addStringOption((option) => option.setName('name').setDescription('The type name').setRequired(true))
-  .addBooleanOption((option) => option.setName('public').setDescription('Should the response be publicly visible to others?').setRequired(false));
+  .addBooleanOption((option) => option.setName('hidden').setDescription('Should the response be hidden so only you can see it?').setRequired(false));
 
 export async function execute(interaction: ChatInputCommandInteraction) {
   const category = interaction.options.getNumber('category');
-  const isPublic = interaction.options.getBoolean('public') ?? false;
-  return itemLookup(interaction, { category, ephemeral: !isPublic, type: 'Type' }, (messageId: string) => {
+  const isHidden = interaction.options.getBoolean('hidden') ?? false;
+  return itemLookup(interaction, { category, ephemeral: isHidden, type: 'Type' }, (messageId: string) => {
     App.db.save(ResumeCommand.create(messageId, 'search', { category, name: interaction.options.getString('name') ?? '' }));
   });
 }

@@ -3,6 +3,7 @@ import type { AppModule } from '$lib/StarKitten';
 import { join } from 'node:path';
 
 export default {
+  disabled: true,
   name: 'Manufacturing',
   description: 'Industry and manufacturing related commands.',
   dependencies: ['Auth', 'Characters', 'EveStatic'],

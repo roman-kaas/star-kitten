@@ -23,7 +23,7 @@ const init = async () => {
 export default {
   name: 'Skills',
   description:
-    'View your character skills and skill queue. If enabled, will update other modules with skill data. eg. Manufacturing info, skill requirements...',
+    'View your character skills and skill queue. If enabled, will update other modules with skill data.',
   scopes: joinScopes(ESI_SCOPES.PUBLIC_DATA, ESI_SCOPES.SKILLS_READ_SKILLS, ESI_SCOPES.SKILLS_READ_SKILLQUEUE),
   dependencies: ['Auth', 'Characters'],
   database: {

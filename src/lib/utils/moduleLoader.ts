@@ -15,7 +15,9 @@ export async function loadModules() {
     absolute: true,
   })) {
     const { default: module } = await import(file);
-    modules.set(module.name, module);
+    if (!module.disabled) {
+      modules.set(module.name, module);
+    }
   }
   const sortedNames = topologicalSort(Array.from(modules.values()));
   console.debug(`Initializing modules in order: ${sortedNames.join(', ')}`);

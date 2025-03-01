@@ -74,13 +74,27 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
   ];
 
   const updateContext = async (key: string, context: CharacterContext) => {
-    const refresh = () => db.getUserByDiscordId(interaction.user.id);
+    
+    const refreshUser = () => context.user = db.getUserByDiscordId(interaction.user.id);
+    
+    const getAndRefreshCharacter = async () => {
+      const character = context.user.characters[context.characterIndex];
+      if (!character.validToken) {
+        await refreshTokenAndUpdateCharacter(character.id, character.scopes);
+        refreshUser();
+        return context.user.characters[context.characterIndex];
+      }
+      return character;
+    };
+
     switch (key) {
-      case PageKey.NEXT:
+      case PageKey.NEXT: 
         context.characterIndex++;
+        await getAndRefreshCharacter();
         return PageKey.CHARACTER;
-      case PageKey.PREV:
+      case PageKey.PREV: 
         context.characterIndex--;
+        await getAndRefreshCharacter();
         return PageKey.CHARACTER;
       case PageKey.CANCEL:
         return PageKey.CHARACTER;
@@ -89,11 +103,11 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
       case PageKey.REVOKE_NONPUBLIC_SCOPES: {
         const character = context.user.characters[context.characterIndex];
         await refreshTokenAndUpdateCharacter(character.id, 'publicData');
-        context.user = refresh();
+        refreshUser();
         return PageKey.CHARACTER;
       }
       case PageKey.REFRESH: {
-        context.user = refresh();
+        refreshUser();
         return PageKey.CHARACTER;
       }
       case PageKey.DELETE: {
@@ -104,7 +118,7 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
           // set main to next character if there are any, or null
           context.user.mainCharacter = context.user.characters[context.characterIndex] ?? null;
           db.save(context.user);
-          context.user = refresh();
+          refreshUser();
         }
         return context.user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER;
       }
@@ -112,7 +126,7 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
         const character = context.user.characters[context.characterIndex];
         context.user.mainCharacter = character;
         db.save(context.user);
-        context.user = refresh();
+        refreshUser();
         return PageKey.CHARACTER;
       }
       default:

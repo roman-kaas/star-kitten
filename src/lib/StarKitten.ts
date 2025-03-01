@@ -35,6 +35,7 @@ export interface AppModule {
     modelsDir: string;
   };
   init?: () => Promise<void>;
+  disabled?: boolean;
 }
 
 export class StarKitten {

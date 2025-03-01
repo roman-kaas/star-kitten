@@ -1,5 +1,5 @@
 import { ButtonStyle, EmbedBuilder } from 'discord.js';
-import { createActionRow, type Page } from '$lib/discord';
+import { coloredText, createActionRow, type Page } from '$lib/discord';
 import { PageKey, type CharacterContext } from '../characters.command';
 import { AllianceAPI, CharacterAPI, CorporationAPI } from '$eve/esi';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -21,6 +21,7 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
             : (await CorporationAPI.getCorporationIcons(publicData.corporation_id)).px64x64,
         })
         .setTitle(character.name)
+        .setURL(`https://zkillboard.com/character/${character.id}/`)
         .setThumbnail(CharacterAPI.getPortraitURL(character.id))
         .addFields(
           {
@@ -49,6 +50,10 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
           text: `${context.characterIndex + 1}/${context.user.characters.length} -- id: ${character.id}${context.user.mainCharacter?.id === character.id ? ' -- Main' : ''}`,
           iconURL: CharacterAPI.getPortraitURL(character.id),
         });
+      
+      if (!character.validToken) {
+        embed.setColor('Red').setDescription( coloredText('This character has an invalid token. Please reauthenticate.', 'red'));
+      }
 
       return {
         type: 'page',
@@ -61,13 +66,17 @@ export function characterPage(key: string = PageKey.CHARACTER): Page<CharacterCo
               label: 'Next',
               disabled: context.characterIndex === context.user.characters.length - 1,
             },
-            context.user.mainCharacter?.id !== character.id && {
+            character.validToken && context.user.mainCharacter?.id !== character.id && {
               customId: PageKey.SET_MAIN,
               label: 'Set Main',
               style: ButtonStyle.Success,
             },
-            { customId: PageKey.SCOPES, label: 'Scopes', style: ButtonStyle.Secondary },
-            { label: 'Add', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.discordID}` },
+            character.validToken && { customId: PageKey.SCOPES, label: 'Scopes', style: ButtonStyle.Secondary },
+            character.validToken && { label: 'Add', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.discordID}` },
+
+            // invalid token, so show reauth and logout
+            !character.validToken && { label: 'Reauthenticate', style: ButtonStyle.Link, url: `${global.App.config.baseUrl}/auth/${context.discordID}` },
+            !character.validToken && { customId: PageKey.CONFIRM_DELETE, label: 'remove', style: ButtonStyle.Danger }
           ),
         ],
         ephemeral: true,

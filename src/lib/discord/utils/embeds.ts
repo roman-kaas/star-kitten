@@ -40,16 +40,29 @@ export const triplet = (
   ...columns: [Partial<ColumnFieldValues>, Partial<ColumnFieldValues>, Partial<ColumnFieldValues>]
 ) => columns.map((col) => renderField(col.name, col.values?.join('\n'), col.inline));
 
-export function renderThreeColumns(title: string, col1: string[], col2: string[], col3: string[]) {
+export function renderThreeTitledColumns(data: {
+  col1: {
+    title: string;
+    values: string[];
+  },
+  col2: {
+    title: string;
+    values: string[];
+  },
+  col3: {
+    title: string;
+    values: string[];
+  },
+}) {
   const fields = [];
   let counter = [0, 0, 0];
   let first = true;
-  let len = col1.length || col2.length || col3.length;
+  let len = data.col1.values.length || data.col2.values.length || data.col3.values.length;
   for (let i = 0; i < len; ++i) {
     // count string length for each column and store in counter
-    counter[0] += col1[i]?.length ?? 0 + 2;
-    counter[1] += col2[i]?.length ?? 0 + 2;
-    counter[2] += col3[i]?.length ?? 0 + 2;
+    counter[0] += data.col1.values[i]?.length ?? 0 + 2;
+    counter[1] += data.col2.values[i]?.length ?? 0 + 2;
+    counter[2] += data.col3.values[i]?.length ?? 0 + 2;
 
     // if any column exceeds max length, push to fields and reset counter
     if (
@@ -61,27 +74,39 @@ export function renderThreeColumns(title: string, col1: string[], col2: string[]
       --i; // decrement since this iteration exceeds max length
       fields.push(
         ...triplet(
-          { values: col1.slice(0, i), name: first ? title : BREAKING_WHITE_SPACE },
-          { values: col2.slice(0, i) },
-          { values: col3.slice(0, i) },
+          { values: data.col1.values.slice(0, i), name: first ? data.col1.title : BREAKING_WHITE_SPACE },
+          { values: data.col2.values.slice(0, i), name: first ? data.col2.title : BREAKING_WHITE_SPACE },
+          { values: data.col3.values.slice(0, i), name: first ? data.col3.title : BREAKING_WHITE_SPACE },
         ),
       );
-      col1 = col1.slice(i);
-      col2 = col2.slice(i);
-      col3 = col3.slice(i);
+      data.col1.values = data.col1.values.slice(i);
+      data.col2.values = data.col2.values.slice(i);
+      data.col3.values = data.col3.values.slice(i);
 
       counter = [0, 0, 0];
 
       first = false;
       i = 0;
-    } else if (i == col1.length - 1) {
+    } else if (i == data.col1.values.length - 1) {
       fields.push(
-        ...triplet({ values: col1, name: first ? title : BREAKING_WHITE_SPACE }, { values: col2 }, { values: col3 }),
+        ...triplet(
+          { values: data.col1.values, name: first ? data.col1.title : BREAKING_WHITE_SPACE }, 
+          { values: data.col2.values, name: first ? data.col2.title : BREAKING_WHITE_SPACE  }, 
+          { values: data.col3.values, name: first ? data.col3.title : BREAKING_WHITE_SPACE  }
+        ),
       );
       break;
     }
   }
   return fields;
+}
+
+export function renderThreeColumns(title: string, col1: string[], col2: string[], col3: string[]) {
+  return renderThreeTitledColumns({
+    col1: { title, values: col1 },
+    col2: { title: BREAKING_WHITE_SPACE, values: col2 },
+    col3: { title: BREAKING_WHITE_SPACE, values: col3 },
+  });
 }
 
 export function validateEmbeds(...embeds: EmbedBuilder[]) {

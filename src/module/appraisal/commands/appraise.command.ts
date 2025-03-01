@@ -10,7 +10,7 @@ export const data = new SlashCommandBuilder()
   .addNumberOption(option =>
     option.setName('market')
       .setDescription('The market to appraise in')
-      .setRequired(true)
+      .setRequired(false)
       .addChoices(janice.markets.map(m => ({ name: m.name, value: m.id })))
   );
 

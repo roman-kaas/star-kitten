@@ -245,6 +245,10 @@ export class Type {
       types: variant_ids.map((type_id) => getType(type_id)),
     }));
   }
+
+  get hasAttributes() {
+    return this.dogma_attributes && Object.keys(this.dogma_attributes).length > 0;
+  }
 }
 
 export const getType = (type_id: number): Type => new Type(type_id);

@@ -17,32 +17,35 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
         .setFooter({ text: `id: ${type.type_id}` })
         .setColor('Green');
 
+      const embeds = [embed];
       const fields = [];
 
-      const useOrders =
-        type.group.category.category_id === 11
-          ? attributeOrders['11']
-          : type.group.category.category_id === 87
-            ? attributeOrders['87']
-            : attributeOrders.default;
+      if (type.dogma_attributes) {
+        const useOrders =
+          type.group.category.category_id === 11
+            ? attributeOrders['11']
+            : type.group.category.category_id === 87
+              ? attributeOrders['87']
+              : attributeOrders.default;
 
-      Object.entries(useOrders).map((pair) => {
-        const [attributePath, attrs] = pair;
-        const combined = attrs['groupedAttributes']
-          ? attrs.normalAttributes.concat(...(attrs['groupedAttributes']?.map(([name, id]) => id) ?? []))
-          : attrs.normalAttributes;
-        if (!type.hasAnyAttribute(combined)) return;
-        const split = attributePath.split('/');
-        const name = split[split.length - 1];
-        fields.push(
-          ...renderThreeColumns(
-            name,
-            getAttributeNames(type, combined, locale),
-            [],
-            getAttributeValues(type, combined, locale),
-          ),
-        );
-      });
+        Object.entries(useOrders).map((pair) => {
+          const [attributePath, attrs] = pair;
+          const combined = attrs['groupedAttributes']
+            ? attrs.normalAttributes.concat(...(attrs['groupedAttributes']?.map(([name, id]) => id) ?? []))
+            : attrs.normalAttributes;
+          if (!type.hasAnyAttribute(combined)) return;
+          const split = attributePath.split('/');
+          const name = split[split.length - 1];
+          fields.push(
+            ...renderThreeColumns(
+              name,
+              getAttributeNames(type, combined, locale),
+              [],
+              getAttributeValues(type, combined, locale),
+            ),
+          );
+        });
+      }
 
       // for (const [name, attrs] of Object.entries(attrMap)) {
       //   if (!type.hasAnyAttribute(attrs)) continue;
@@ -55,12 +58,12 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
       //   ));
       // }
 
-      const embeds = [];
       // there is a max number of 24 fields per embed
-      embeds.push(embed.addFields(fields.splice(0, 24)));
+      embed.addFields(fields.splice(0, 24));
       while (fields.length > 0) {
         embeds.push(new EmbedBuilder().addFields(fields.splice(0, 24)));
       }
+
       return {
         type: 'page',
         embeds,

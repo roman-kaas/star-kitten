@@ -130,6 +130,7 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
         return PageKey.CHARACTER;
       }
       default:
+        await getAndRefreshCharacter();
         return key;
     }
   };

@@ -1,4 +1,5 @@
 import MiniSearch from 'minisearch';
+import { sanitize } from 'sanitize.js';
 import { getMarketGroup } from '../models/marketGroup';
 import { getType, typeData, type Type } from '../models/type';
 
@@ -53,7 +54,9 @@ export class Search {
   }
 
   searchByName(name: string) {
-    const results = this.miniSearch.search(name);
+    const sanitizedName = sanitize(name);
+    if (sanitizedName.length > 100) return null;
+    const results = this.miniSearch.search(sanitizedName);
     if (results.length === 0) return null;
     return getType(results[0].id);
   }

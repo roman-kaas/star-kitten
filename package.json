@@ -41,6 +41,7 @@
     "minisearch": "^7.1.0",
     "pino": "^7.11.0",
     "pino-pretty": "^11.2.2",
+    "sanitize.js": "^1.0.8",
     "winston": "^3.14.2"
   },
   "scripts": {

@@ -55,13 +55,13 @@ function lookup(messageOrInteraction: ResumeableInteraction | ChatInputCommandIn
   const buildButtonRow = (key: string, context: TypeContext) => {
     return createActionRow(
       { customId: PageKey.MAIN, label: 'Main', style: ButtonStyle.Primary, disabled: key === PageKey.MAIN },
-      {
+      context.type.hasAttributes && {
         customId: PageKey.ATTRIBUTES,
         label: 'Attributes',
         style: ButtonStyle.Primary,
         // disabled: key === PageKey.ATTRIBUTES,
       },
-      {
+      context.type.hasAttributes && {
         customId: PageKey.FITTING,
         label: `Fitting${context.type.variants.length > 0 ? ' | Variants' : ''}`,
         style: ButtonStyle.Primary,

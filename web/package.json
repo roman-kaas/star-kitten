@@ -1,0 +1,23 @@
+{
+  "name": "Star Kitten Web",
+  "module": "src/pages/index.tsx",
+  "type": "module",
+  "scripts": {
+    "dev": "bunx dotenvx run -f .env.development -- brisa dev",
+    "dev:debug": "brisa dev --debug",
+    "build": "brisa build",
+    "start": "bunx dotenvx run -f .env.production -- brisa start"
+  },
+  "dependencies": {
+    "brisa": "0.2.7",
+    "brisa-tailwindcss": "0.2.7",
+    "drizzle-orm": "^0.40.0",
+    "oslo": "^1.2.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "daisyui": "^5.0.0",
+    "drizzle-kit": "^0.30.5",
+    "typescript": "latest"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "star-kitten-lib",
+  "module": "./src/index.ts",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./eve": "./src/eve/index.ts",
+    "./logger": "./src/logger.ts",
+    "./zORM": "./src/zORM/index.ts",
+    "./scheduler": "./src/scheduler/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./db": "./src/db/index.ts"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.30.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "cron-parser": "^5.0.4",
+    "drizzle-orm": "^0.40.0",
+    "jsonwebtoken": "^9.0.2",
+    "jwk-to-pem": "^2.0.7",
+    "jwt-decode": "^4.0.0",
+    "reflect-metadata": "^0.2.2",
+    "winston": "^3.17.0"
+  },
+  "scripts": {
+    "generate-migrations": "bunx drizzle-kit generate --dialect sqlite --schema ./src/db/schema.ts",
+    "migrate": "bun run ./src/db/migrate.ts",
+    "get-data": "bun run refresh:reference-data && bun run refresh:hoboleaks",
+    "refresh:reference-data": "bun run ./src/downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ../data/reference-data",
+    "refresh:hoboleaks": "bun run ./src/downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ../data/hoboleaks"
+  }
+}

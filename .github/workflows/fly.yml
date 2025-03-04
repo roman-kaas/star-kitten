@@ -1,0 +1,29 @@
+name: Deploy to Fly.io
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: [ubuntu-latest]
+    concurrency: deploy-group # optional: ensure only one action runs at a time
+    strategy:
+      matrix:
+        project:
+          - bot
+          # - web
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Building ${matrix.project}
+        run: |
+          cd ${matrix.project}
+          flyctl deploy --depot=false --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

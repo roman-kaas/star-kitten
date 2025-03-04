@@ -74,13 +74,14 @@ PORT=3000
 NODE_ENV=development
 LOG_LEVEL=debug
 
-# EVE
+
+# EVE - https://developers.eveonline.com/applications
 EVE_CLIENT_ID=YOUR_EVE_CLIENT_ID
 EVE_CLIENT_SECRET=YOUR_EVE_SECRET
 EVE_CALLBACK_URL=http://localhost:3000/auth/callback
 ESI_USER_AGENT=ADD_YOUR_USER_AGENT_INFO_HERE
 
-#Discord
+#Discord - https://discord.com/developers/applications
 DISCORD_APP_ID=YOUR_APP_ID
 DISCORD_CLIENT_SECRET=YOUR_CLIENT_SECRET
 DISCORD_PUBLIC_KEY=YOUR_PUBLIC_KEY
@@ -89,5 +90,10 @@ DISCORD_BOT_TOKEN=YOUR_BOT_TOKEN
 # ID of a test server to have immediate command refreshes
 DISCORD_TEST_GUILD_ID=YOUR_TEST_SERVER_ID
 
+# For using Janice's Appraisal API
+JANICE_KEY=XXX
+
+# For using Perplexities AI API
+PERPLEXITY_API_KEY=XXX
 
 ```

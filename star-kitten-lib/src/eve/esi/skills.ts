@@ -1,4 +1,4 @@
-import type { Character } from '@db/models';
+import { CharacterHelper, type Character } from '../../db/models';
 import { esiFetch } from './fetch';
 
 export interface CharacterAttributes {
@@ -14,7 +14,7 @@ export interface CharacterAttributes {
 
 // required scope: esi-skills.read_skills.v1
 export function getCharacterAttributes(character: Character) {
-  if (!character.hasScope('esi-skills.read_skills.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-skills.read_skills.v1')) return null;
   return esiFetch<CharacterAttributes>(`/characters/${character.eveID}/attributes`, character);
 }
 
@@ -31,7 +31,7 @@ export interface SkillQueueItem {
 
 // required scope: esi-skills.read_skillqueue.v1
 export function getCharacterSkillQueue(character: Character) {
-  if (!character.hasScope('esi-skills.read_skillqueue.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-skills.read_skillqueue.v1')) return null;
   return esiFetch<SkillQueueItem[]>(`/characters/${character.eveID}/skillqueue`, character);
 }
 
@@ -50,7 +50,7 @@ export interface CharacterSkills {
 
 // required scope: esi-skills.read_skills.v1
 export function getCharacterSkills(character: Character) {
-  if (!character.hasScope('esi-skills.read_skills.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-skills.read_skills.v1')) return null;
   return esiFetch<CharacterSkills>(`/characters/${character.eveID}/skills`, character);
 }
 

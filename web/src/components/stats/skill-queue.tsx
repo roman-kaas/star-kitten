@@ -1,5 +1,5 @@
-import { Character } from 'star-kitten-lib/db';
-import { calculateTrainingPercentage, esi, Skill } from 'star-kitten-lib/eve';
+import { type Character } from 'star-kitten-lib/db';
+import { calculateTrainingPercentage, esi, getSkill, getType } from 'star-kitten-lib/eve';
 
 export default async function SkillQueueStat({
   character,
@@ -19,14 +19,14 @@ export default async function SkillQueueStat({
     );
   }
 
-  const skill = new Skill(current.skill_id);
+  const skill = getSkill(current.skill_id);
   const percentage = calculateTrainingPercentage(current) * 100;
   return (
     <div class="stat">
       <div class="stat-figure text-secondary">
       </div>
       <div class="stat-title">Currently Training</div>
-      <div class="stat-value">{skill.type.name.en} {current.finished_level}</div>
+      <div class="stat-value">{getType(skill.type_id).name.en} {current.finished_level}</div>
       <div class="stat-desc"><progress class="progress progress-primary w-full" value={percentage} max="100"></progress></div>
     </div>
   );

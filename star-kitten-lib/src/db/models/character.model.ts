@@ -1,192 +1,185 @@
 import { refresh, validateToken, type EveTokens } from 'star-kitten-lib/eve';
 import type { User } from './user.model';
 import { jwtDecode } from 'jwt-decode';
-import { characters } from '@db/schema';
-import { eq } from 'drizzle-orm';
-import { db } from '@db';
+import { characters } from '../schema';
+import { eq, and } from 'drizzle-orm';
+import { db } from '..';
 
-export class Character {
-  id!: number;
-  eveID!: number;
-  user?: User;
-  userID!: number;
-  accessToken!: string;
-  expiresAt!: Date;
-  refreshToken!: string;
-  name!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
+export interface Character {
+  id: number;
+  eveID: number;
+  userID: number;
+  accessToken: string;
+  expiresAt: Date;
+  refreshToken: string;
+  name: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
 
-  get validToken() {
-    return new Date() < this.expiresAt;
+export class CharacterHelper {
+
+  public static hasValidToken(character: Character) {
+    return new Date() < character.expiresAt;
   };
 
-  get scopes() {
-    const decoded = jwtDecode(this.accessToken) as {
+  public static getScopes(character: Character) {
+    const decoded = jwtDecode(character.accessToken) as {
       scp: string[] | string;
     };
     return typeof decoded.scp === 'string' ? [decoded.scp] : decoded.scp;
   }
-  get isOnlyPublicScope() {
-    return this.scopes.length === 1 && this.hasScope('publicData');
+
+  public static hasOnlyPublicScope(character: Character) {
+    return this.getScopes(character).length === 1 && this.hasScope(character, 'publicData');
   }
 
-  get tokens() {
+  public static getTokens(character: Character) {
     return {
-      access_token: this.accessToken,
-      refresh_token: this.refreshToken,
-      expires_in: (this.expiresAt.getTime() - Date.now()) / 1000,
+      access_token: character.accessToken,
+      refresh_token: character.refreshToken,
+      expires_in: (character.expiresAt.getTime() - Date.now()) / 1000,
     };
   }
 
-  hasScope(scope: string) {
-    return this.scopes.includes(scope);
+  public static hasScope(character: Character, scope: string) {
+    return this.getScopes(character).includes(scope);
   }
 
-  hasAllScopes(scopes: string[]) {
-    return scopes.every((scope) => this.hasScope(scope));
+  public static hasAllScopes(character: Character, scopes: string[]) {
+    const has = this.getScopes(character);
+    return scopes.every((scope) => has.includes(scope));
   }
-
-  private constructor() {}
 
   public static find(id: number) {
     const result = db.select().from(characters)
-        .where(eq(characters.id, id))
-        .limit(1)
-        .get();
+      .where(eq(characters.id, id))
+      .limit(1)
+      .get();
     const c = this.createCharacters(result)
     return c ? c[0] : undefined;
   }
 
   public static findByUser(user: User) {
     const result = db.select().from(characters)
-        .where(eq(characters.userID, user.id))
-        .get();
+      .where(eq(characters.userID, user.id))
+      .all();
     return this.createCharacters(result);
   }
-  
-  public static findByName(name: string) {
+
+  public static findByUserAndEveID(userID: number, eveID: number) {
     const result = db.select().from(characters)
-        .where(eq(characters.name, name))
-        .get();
+      .where(and(eq(characters.userID, userID), eq(characters.eveID, eveID)))
+      .limit(1)
+      .get();
     const c = this.createCharacters(result);
     return c ? c[0] : undefined;
   }
-  
+
+  public static findByName(userID: number, name: string) {
+    const result = db.select().from(characters)
+      .where(and(eq(characters.name, name), eq(characters.userID, userID)))
+      .limit(1)
+      .get();
+    const c = this.createCharacters(result);
+    return c ? c[0] : undefined;
+  }
+
   public static findAll() {
     const result = db.select().from(characters)
-        .all();
+      .all();
     return this.createCharacters(result);
   }
 
   static create(eveID: number, name: string, user: User, tokens: EveTokens) {
-    const character = new Character();
-    character.eveID = eveID;
-    character.user = user;
-    character.userID = user.id;
-    character.accessToken = tokens.access_token;
-    character.expiresAt = new Date(tokens.expires_in * 1000);
-    character.refreshToken = tokens.refresh_token;
-    character.name = name;
-    character.createdAt = new Date();
-    return character;
+    return this.save({
+      eveID: eveID,
+      userID: user.id,
+      accessToken: tokens.access_token,
+      expiresAt: new Date(tokens.expires_in * 1000),
+      refreshToken: tokens.refresh_token,
+      name: name,
+      createdAt: new Date(),
+    } as Character);
   }
 
-  static createCharacters(query: any, forUser?: User): Character[] {
-    if (!query.characters) return [];
-      if (Array.isArray(query.characters)) {
-        return query.characters.map((character: any) => {
-          const c = new Character();
-          c.id = character.id;
-          c.eveID = character.eveID;
-          c.user = forUser;
-          c.userID = character.userID;
-          c.accessToken = character.accessToken;
-          c.expiresAt = new Date(character.expiresAt);
-          c.refreshToken = character.refreshToken;
-          c.name = character.name;
-          c.createdAt = new Date(character.createdAt);
-          c.updatedAt = new Date(character.updatedAt);
-          return c;
-        });
-      } else {
-        const character = new Character();
-        character.id = query.characters.id;
-        character.eveID = query.characters.eveID;
-        character.user = forUser;
-        character.userID = query.characters.userID;
-        character.accessToken = query.characters.accessToken;
-        character.expiresAt = new Date(query.characters.expiresAt);
-        character.refreshToken = query.characters.refreshToken;
-        character.name = query.characters.name;
-        character.createdAt = new Date(query.characters.createdAt);
-        character.updatedAt = new Date(query.characters.updatedAt);
-        return [character];
-      }
+  static createCharacters(query: any): Character[] {
+    if (!query) return [];
+    if (Array.isArray(query)) {
+      return query.map((character: any) => {
+        return {
+          id: character.id,
+          eveID: character.eveID,
+          userID: character.userID,
+          accessToken: character.accessToken,
+          expiresAt: new Date(character.expiresAt),
+          refreshToken: character.refreshToken,
+          name: character.name,
+          createdAt: new Date(character.createdAt),
+          updatedAt: new Date(character.updatedAt),
+        };
+      });
+    } else {
+      return [{
+        id: query.id,
+        eveID: query.eveID,
+        userID: query.userID,
+        accessToken: query.accessToken,
+        expiresAt: new Date(query.expiresAt),
+        refreshToken: query.refreshToken,
+        name: query.name,
+        createdAt: new Date(query.createdAt),
+        updatedAt: new Date(query.updatedAt),
+      }];
+    }
   }
 
-  static createFromMain(query: any, forUser?: User) {
-    if (!query.main) return undefined;
-    const character = new Character();
-    character.id = query.main.id;
-    character.eveID = query.main.eveID;
-    character.user = forUser;
-    character.userID = query.main.userID;
-    character.accessToken = query.main.accessToken;
-    character.expiresAt = new Date(query.main.expiresAt);
-    character.refreshToken = query.main.refreshToken;
-    character.name = query.main.name;
-    character.createdAt = new Date(query.main.createdAt);
-    character.updatedAt = new Date(query.main.updatedAt);
-    return character;
-  }
-
-  public save() {
+  public static save(character: Character) {
     db.insert(characters)
       .values({
-        id: this.id,
-        eveID: this.eveID,
-        userID: this.userID,
-        name: this.name,
-        accessToken: this.accessToken,
-        expiresAt: this.expiresAt.getTime(),
-        refreshToken: this.refreshToken,
+        id: character.id,
+        eveID: character.eveID,
+        userID: character.userID,
+        name: character.name,
+        accessToken: character.accessToken,
+        expiresAt: character.expiresAt.getTime(),
+        refreshToken: character.refreshToken,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       })
       .onConflictDoUpdate({
         target: characters.id,
         set: {
-          eveID: this.eveID,
-          userID: this.userID,
-          name: this.name,
-          accessToken: this.accessToken,
-          expiresAt: this.expiresAt.getTime(),
-          refreshToken: this.refreshToken,
+          eveID: character.eveID,
+          userID: character.userID,
+          name: character.name,
+          accessToken: character.accessToken,
+          expiresAt: character.expiresAt.getTime(),
+          refreshToken: character.refreshToken,
           updatedAt: Date.now(),
         },
       })
       .run();
-      return this;
+    return CharacterHelper.findByUserAndEveID(character.userID, character.eveID);
   }
 
-  public delete() {
+  public static delete(character: Character) {
     db.delete(characters)
-      .where(eq(characters.id, this.id))
+      .where(eq(characters.id, character.id))
       .run();
   }
-  
-  public async refreshTokens(scopes?: string[] | string) {
-    const tokens = await refresh({ refresh_token: this.refreshToken }, scopes);
+
+  public static async refreshTokens(character: Character, scopes?: string[] | string) {
+    const tokens = await refresh({ refresh_token: character.refreshToken }, scopes);
     const decoded = await validateToken(tokens.access_token);
     if (!decoded) {
-      console.error(`Failed to validate token for character ${this.id}`);
-      return this;
+      console.error(`Failed to validate token for character ${character.id}`);
+      return character;
     }
-    this.accessToken = tokens.access_token;
-    this.expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
-    this.refreshToken = tokens.refresh_token;
-    this.save();
-    return this;
+    character.accessToken = tokens.access_token;
+    character.expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+    character.refreshToken = tokens.refresh_token;
+    this.save(character);
+    return character;
   }
 }

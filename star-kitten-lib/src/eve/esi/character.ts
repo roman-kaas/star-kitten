@@ -1,4 +1,4 @@
-import type { Character } from '@db';
+import { CharacterHelper, type Character } from '../../db';
 import { esiFetch } from './fetch';
 import { tokenHasScopes } from './scopes';
 
@@ -73,7 +73,7 @@ export interface CharacterRoles {
 
 // required scope: esi-characters.read_corporation_roles.v1
 export function getCharacterRoles(character: Character) {
-  if (!character.hasScope('esi-characters.read_corporation_roles.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_corporation_roles.v1')) return null;
   return esiFetch<Partial<CharacterRoles>>(`/characters/${character.eveID}/roles/`, character);
 }
 
@@ -86,7 +86,7 @@ export interface CharacterTitles {
 
 // required scope: esi-characters.read_titles.v1
 export function getCharacterTitles(character: Character) {
-  if (!character.hasScope('esi-characters.read_titles.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_titles.v1')) return null;
   return esiFetch<Partial<CharacterTitles>>(`/characters/${character.eveID}/titles/`, character);
 }
 
@@ -98,7 +98,7 @@ export interface CharacterStandings {
 
 // required scope: esi-characters.read_standings.v1
 export function getCharacterStandings(character: Character) {
-  if (!character.hasScope('esi-characters.read_standings.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_standings.v1')) return null;
   return esiFetch<Partial<CharacterStandings>[]>(`/characters/${character.eveID}/standings/`, character);
 }
 
@@ -124,7 +124,7 @@ export interface Notification {
 
 // required scope: esi-characters.read_notifications.v1
 export function getCharacterNotifications(character: Character) {
-  if (!character.hasScope('esi-characters.read_notifications.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_notifications.v1')) return null;
   return esiFetch<Partial<Notification>[]>(`/characters/${character.eveID}/notifications/`, character);
 }
 
@@ -138,7 +138,7 @@ export interface ContactNotification {
 
 // required scope: esi-characters.read_notifications.v1
 export function getCharacterContactNotifications(character: Character) {
-  if (!character.hasScope('esi-characters.read_notifications.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_notifications.v1')) return null;
   return esiFetch<Partial<ContactNotification>[]>(`/characters/${character.eveID}/notifications/contacts`, character);
 }
 
@@ -161,7 +161,7 @@ export interface Medals {
 
 // required scope: esi-characters.read_medals.v1
 export function getCharacterMedals(character: Character) {
-  if (!character.hasScope('esi-characters.read_medals.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_medals.v1')) return null;
   return esiFetch<Partial<Medals>[]>(`/characters/${character.eveID}/medals/`, character);
 }
 
@@ -173,7 +173,7 @@ export interface JumpFatigue {
 
 // required scope: esi-characters.read_fatigue.v1
 export function getCharacterJumpFatigue(character: Character) {
-  if (!character.hasScope('esi-characters.read_fatigue.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_fatigue.v1')) return null;
   return esiFetch<Partial<JumpFatigue>>(`/characters/${character.eveID}/fatigue/`, character);
 }
 
@@ -190,7 +190,7 @@ export interface Blueprint {
 
 // required scope: esi-characters.read_blueprints.v1
 export function getCharacterBlueprints(character: Character) {
-  if (!character.hasScope('esi-characters.read_blueprints.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_blueprints.v1')) return null;
   return esiFetch<Partial<Blueprint>[]>(`/characters/${character.eveID}/blueprints/`, character);
 }
 
@@ -204,7 +204,7 @@ export interface AgentResearch {
 
 // required scope: esi-characters.read_agents_research.v1
 export function getCharacterAgentResearch(character: Character) {
-  if (!character.hasScope('esi-characters.read_agents_research.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-characters.read_agents_research.v1')) return null;
   return esiFetch<Partial<AgentResearch>[]>(`/characters/${character.eveID}/agents_research/`, character);
 }
 
@@ -228,13 +228,13 @@ export interface Clones {
 
 // required scope: esi-clones.read_clones.v1
 export function getCharacterClones(character: Character) {
-  if (!character.hasScope('esi-clones.read_clones.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-clones.read_clones.v1')) return null;
   return esiFetch<Partial<Clones>>(`/characters/${character.eveID}/clones/`, character);
 }
 
 // required scope: esi-clones.read_implants.v1
 export function getCharacterImplants(character: Character) {
-  if (!character.hasScope('esi-clones.read_implants.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-clones.read_implants.v1')) return null;
   return esiFetch<number[]>(`/characters/${character.eveID}/implants/`, character);
 }
 
@@ -253,7 +253,7 @@ export interface Asset {
 
 // required scope: esi-assets.read_assets.v1
 export function getCharacterAssets(character: Character) {
-  if (!character.hasScope('esi-assets.read_assets.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-assets.read_assets.v1')) return null;
   return esiFetch<Partial<Asset>[]>(`/characters/${character.eveID}/assets/`, character);
 }
 
@@ -268,7 +268,7 @@ export interface AssetLocation {
 
 // required scope: esi-assets.read_assets.v1
 export function getCharacterAssetLocations(character: Character, ids: number[]) {
-  if (!character.hasScope('esi-assets.read_assets.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-assets.read_assets.v1')) return null;
   return esiFetch<Partial<AssetLocation>[]>(`/characters/${character.eveID}/assets/locations/`, character, {
     method: 'POST',
     body: JSON.stringify(ids),
@@ -282,7 +282,7 @@ export interface AssetNames {
 
 // required scope: esi-assets.read_assets.v1
 export function getCharacterAssetNames(character: Character, ids: number[]) {
-  if (!character.hasScope('esi-assets.read_assets.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-assets.read_assets.v1')) return null;
   return esiFetch<Partial<AssetNames>[]>(`/characters/${character.eveID}/assets/names/`, character, {
     method: 'POST',
     body: JSON.stringify(ids),
@@ -293,7 +293,7 @@ export function getCharacterAssetNames(character: Character, ids: number[]) {
 
 // required scope: esi-wallet.read_character_wallet.v1
 export function getCharacterWallet(character: Character) {
-  if (!character.hasScope('esi-wallet.read_character_wallet.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-wallet.read_character_wallet.v1')) return null;
   return esiFetch<number>(`/characters/${character.eveID}/wallet/`, character);
 }
 
@@ -312,7 +312,7 @@ export interface WalletTransaction {
 
 // required scope: esi-wallet.read_character_wallet.v1
 export function getCharacterWalletTransactions(character: Character, fromId: number) {
-  if (!character.hasScope('esi-wallet.read_character_wallet.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-wallet.read_character_wallet.v1')) return null;
   return esiFetch<Partial<WalletTransaction>[]>(`/characters/${character.eveID}/wallet/transactions/`, character, {
     method: 'POST',
     body: JSON.stringify(fromId),
@@ -338,6 +338,46 @@ export interface WalletJournalEntry {
 
 // required scope: esi-wallet.read_character_wallet.v1
 export function getCharacterWalletJournal(character: Character, page: number = 1) {
-  if (!character.hasScope('esi-wallet.read_character_wallet.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-wallet.read_character_wallet.v1')) return null;
   return esiFetch<Partial<WalletJournalEntry>[]>(`/characters/${character.eveID}/wallet/journal/?page=${page}`, character);
+}
+
+
+// LOCATION --------------------------------------------------
+
+export interface Location {
+  solar_system_id: number;
+  station_id: number;
+  structure_id: number;
+}
+
+// required scope: esi-location.read_location.v1
+export function getCharacterLocation(character: Character) {
+  if (!CharacterHelper.hasScope(character, 'esi-location.read_location.v1')) return null;
+  return esiFetch<Partial<Location>>(`/characters/${character.eveID}/location/`, character);
+}
+
+export interface Online {
+  last_login: string;
+  last_logout: string;
+  logins: number;
+  online: boolean;
+}
+
+// required scope: esi-location.read_online.v1
+export function getCharacterOnline(character: Character) {
+  if (!CharacterHelper.hasScope(character, 'esi-location.read_online.v1')) return null;
+  return esiFetch<Partial<Online>>(`/characters/${character.eveID}/online/`, character);
+}
+
+export interface CurrentShip {
+  ship_item_id: number;
+  ship_type_id: number;
+  ship_name: string;
+}
+
+// required scope: esi-location.read_ship_type.v1
+export function getCharacterCurrentShip(character: Character) {
+  if (!CharacterHelper.hasScope(character, 'esi-location.read_ship_type.v1')) return null;
+  return esiFetch<Partial<CurrentShip>>(`/characters/${character.eveID}/ship/`, character);
 }

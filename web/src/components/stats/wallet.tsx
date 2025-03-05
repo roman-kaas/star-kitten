@@ -1,5 +1,5 @@
 import { renderComponent } from 'brisa/server';
-import { Character } from 'star-kitten-lib/db';
+import { type Character } from 'star-kitten-lib/db';
 import { esi } from 'star-kitten-lib/eve';
 import { formatNumberToShortForm } from 'star-kitten-lib';
 
@@ -11,14 +11,14 @@ export default async function WalletStat({
 
   const balance = await esi.CharacterAPI.getCharacterWallet(character) || 0;
   const journal = await esi.CharacterAPI.getCharacterWalletJournal(character, 1);
-  // get earliest transaction today from list of journal transactions
+  // get earliest transaction today from list of journal transactionsbun d
   const earliestTransaction = journal?.filter((transaction) => {
     const date = new Date(transaction.date!);
     return date.getDate() === new Date().getDate();
   }).sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())[0];
 
-  const balanceChange = balance - (earliestTransaction!.balance || balance);
-  const balanceChangePercentage = (balanceChange / (earliestTransaction!.balance || balance)) * 100;
+  const balanceChange = balance - (earliestTransaction?.balance || balance);
+  const balanceChangePercentage = (balanceChange / (earliestTransaction?.balance || balance)) * 100;
   const balanceChangeDirection = balanceChange > 0 ? '↗︎' : '↘︎';
   const balanceChangeText = `${balanceChangeDirection} ${formatNumberToShortForm(Math.abs(balanceChange))} (${Math.abs(Number(balanceChangePercentage.toFixed(2)))}%)`;
 

@@ -1,6 +1,5 @@
-import jsonData from '@../../data/reference-data/types.json';
+import jsonData from '../../../data/reference-data/types.json';
 import type {
-  ActivityType,
   AttributeIDValue,
   BlueprintTypeIDActivity,
   EffectIDDefault,
@@ -9,7 +8,7 @@ import type {
 } from './sharedTypes';
 import { IconSize } from './icon';
 import { getUnit, type Unit } from './unit';
-import { type Attribute, CommonAttribute, getAttribute } from './attribute';
+import { CommonAttribute, getAttribute } from './attribute';
 import { getGroup } from './group';
 import { getMetaGroup } from './metaGroup';
 
@@ -36,93 +35,67 @@ interface Traits {
   types: { [skill_type_id: string]: { [order: string]: Bonus } };
 }
 
-export class Type {
-  public readonly type_id: number;
-  public readonly name: LocalizedString;
-  public readonly description: LocalizedString;
-  public readonly published: boolean;
-
-  public readonly group_id?: number;
-  public readonly base_price?: number;
-  public readonly capacity?: number;
-  public readonly faction_id?: number;
-  public readonly graphic_id?: number;
-  public readonly market_group_id?: number;
-  public readonly mass?: number;
-  public readonly masteries?: Masteries;
-  public readonly meta_group_id?: number;
-  public readonly portion_size?: number;
-  public readonly race_id?: number;
-  public readonly radius?: number;
-  public readonly sof_faction_name?: string;
-  public readonly sound_id?: number;
-  public readonly traits?: Traits;
-  public readonly volume?: number;
-  public readonly dogma_attributes?: {
+export interface Type {
+  readonly type_id: number;
+  readonly name: LocalizedString;
+  readonly description: LocalizedString;
+  readonly published: boolean;
+  readonly group_id?: number;
+  readonly base_price?: number;
+  readonly capacity?: number;
+  readonly faction_id?: number;
+  readonly graphic_id?: number;
+  readonly market_group_id?: number;
+  readonly mass?: number;
+  readonly masteries?: Masteries;
+  readonly meta_group_id?: number;
+  readonly portion_size?: number;
+  readonly race_id?: number;
+  readonly radius?: number;
+  readonly sof_faction_name?: string;
+  readonly sound_id?: number;
+  readonly traits?: Traits;
+  readonly volume?: number;
+  readonly dogma_attributes?: {
     [attribute_id: string]: AttributeIDValue;
   };
-  public readonly dogma_effects?: { [effect_id: string]: EffectIDDefault };
-  public readonly packaged_volume?: number;
-  public readonly type_materials?: { [type_id: string]: MaterialIDQuantity };
-  public readonly required_skills?: { [skill_type_id: string]: number }; // skill_type_id : level
-  public readonly type_variations?: { [meta_group_id: string]: number[] }; // meta_group_id : type_ids[]
-  public readonly produced_by_blueprints?: {
+  readonly dogma_effects?: { [effect_id: string]: EffectIDDefault };
+  readonly packaged_volume?: number;
+  readonly type_materials?: { [type_id: string]: MaterialIDQuantity };
+  readonly required_skills?: { [skill_type_id: string]: number }; // skill_type_id : level
+  readonly type_variations?: { [meta_group_id: string]: number[] }; // meta_group_id : type_ids[]
+  readonly produced_by_blueprints?: {
     [blueprint_type_id: string]: BlueprintTypeIDActivity;
   }; // blueprint_type_id : blueprint_activity
-  public readonly buildable_pin_type_ids?: number[];
-  public readonly is_ore?: boolean;
-  public readonly ore_variations?: { [variant: string]: number }; // variant : type_id
-  public readonly produced_by_schematic_ids?: number[];
-  public readonly used_by_schematic_ids?: number[];
-  public readonly is_blueprint?: boolean;
+  readonly buildable_pin_type_ids?: number[];
+  readonly is_ore?: boolean;
+  readonly ore_variations?: { [variant: string]: number }; // variant : type_id
+  readonly produced_by_schematic_ids?: number[];
+  readonly used_by_schematic_ids?: number[];
+  readonly is_blueprint?: boolean;
+}
 
-  constructor(type_id: number) {
-    const data = typeData[type_id];
-    if (!data) throw new Error(`Type ID ${type_id} not found in reference data`);
-    this.type_id = type_id;
-    this.name = data.name;
-    this.description = data.description;
-    this.published = data.published;
+export function getType(type_id: number) {
+  const data = typeData[type_id];
+  if (!data) throw new Error(`Type ID ${type_id} not found in reference data`);
+  return data;
+}
 
-    this.group_id = data.group_id;
-    this.base_price = data.base_price;
-    this.capacity = data.capacity;
-    this.faction_id = data.faction_id;
-    this.graphic_id = data.graphic_id;
-    this.market_group_id = data.market_group_id;
-    this.mass = data.mass;
-    this.masteries = data.masteries;
-    this.meta_group_id = data.meta_group_id;
-    this.portion_size = data.portion_size;
-    this.race_id = data.race_id;
-    this.radius = data.radius;
-    this.sof_faction_name = data.sof_faction_name;
-    this.sound_id = data.sound_id;
-    this.traits = data.traits;
-    this.volume = data.volume;
-    this.dogma_attributes = data.dogma_attributes;
-    this.dogma_effects = data.dogma_effects;
-    this.packaged_volume = data.packaged_volume;
-    this.type_materials = data.type_materials;
-    this.required_skills = data.required_skills;
-    this.type_variations = data.type_variations;
-    this.produced_by_blueprints = data.produced_by_blueprints;
-    this.buildable_pin_type_ids = data.buildable_pin_type_ids;
-    this.is_ore = data.is_ore;
-    this.ore_variations = data.ore_variations;
-    this.produced_by_schematic_ids = data.produced_by_schematic_ids;
-    this.used_by_schematic_ids = data.used_by_schematic_ids;
-  }
+export function getTypeIconUrl(type: Type, size: IconSize = IconSize.SIZE_64) {
+  return `https://images.evetech.net/types/${type.type_id}/icon${type.is_blueprint ? '/bp' : ''}?size=${size}`;
+}
 
-  getIconUrl(size: IconSize = IconSize.SIZE_64) {
-    return `https://images.evetech.net/types/${this.type_id}/icon${this.is_blueprint ? '/bp' : ''}?size=${size}`;
-  }
-
-  get iconUrl() {
-    return this.getIconUrl();
-  }
-
-  get skillBonuses(): {
+export function getSkillBonuses(type: Type): {
+  skill: Type;
+  bonuses: {
+    bonus: number;
+    bonus_text: LocalizedString;
+    importance: number;
+    unit: Unit;
+  }[];
+}[] {
+  if (!type.traits) return [];
+  const skillBonuses: {
     skill: Type;
     bonuses: {
       bonus: number;
@@ -130,125 +103,103 @@ export class Type {
       importance: number;
       unit: Unit;
     }[];
-  }[] {
-    if (!this.traits) return [];
-    const skillBonuses: {
-      skill: Type;
-      bonuses: {
-        bonus: number;
-        bonus_text: LocalizedString;
-        importance: number;
-        unit: Unit;
-      }[];
-    }[] = [];
-    for (const skill_type_id in this.traits.types) {
-      const bonuses = [];
-      for (const order in this.traits.types[skill_type_id]) {
-        const bonus = this.traits.types[skill_type_id][order];
-        bonuses.push({
+  }[] = [];
+  for (const skill_type_id in type.traits.types) {
+    skillBonuses.push({
+      skill: getType(Number(skill_type_id)),
+      bonuses: Object.keys(type.traits.types[skill_type_id]).map((order) => {
+        const bonus = type.traits!.types[skill_type_id][order];
+        return {
           bonus: bonus.bonus,
           bonus_text: bonus.bonus_text,
           importance: bonus.importance,
           unit: getUnit(bonus.unit_id),
-        });
-      }
-      skillBonuses.push({
-        skill: getType(Number(skill_type_id)),
-        bonuses,
-      });
-    }
-    return skillBonuses;
+        };
+      }),
+    });
   }
-
-  get roleBonuses() {
-    if (!this.traits || !this.traits.role_bonuses) return [];
-    const bonuses = [];
-    for (const bonus of Object.values(this.traits.role_bonuses)) {
-      bonuses.push({
-        bonus: bonus.bonus,
-        bonus_text: bonus.bonus_text,
-        importance: bonus.importance,
-        unit: bonus.unit_id && getUnit(bonus.unit_id),
-      });
-    }
-    return bonuses;
-  }
-
-  get eveRefLink() {
-    return `https://everef.net/types/${this.type_id}`;
-  }
-
-  get eveTycoonLink() {
-    return `https://evetycoon.com/market/${this.type_id}`;
-  }
-
-  get attributes(): { attribute: Attribute; value: number }[] {
-    const attributes = [];
-    for (const attribute_id in this.dogma_attributes) {
-      attributes.push({
-        attribute: getAttribute(Number(attribute_id)),
-        value: this.dogma_attributes[attribute_id].value,
-      });
-    }
-    return attributes;
-  }
-
-  hasAnyAttribute(attribute_ids: CommonAttribute[]) {
-    for (const attribute_id of attribute_ids) {
-      if (this.dogma_attributes[attribute_id]) return true;
-    }
-    return false;
-  }
-
-  get skills(): { skill: Type; level: number }[] {
-    const skills = [];
-    for (const skill_type_id in this.required_skills) {
-      skills.push({
-        skill: getType(Number(skill_type_id)),
-        level: this.required_skills[skill_type_id],
-      });
-    }
-    return skills;
-  }
-
-  getAttribute(attribute_id: number) {
-    if (!this.dogma_attributes[attribute_id]) return null;
-    return {
-      attribute: getAttribute(attribute_id),
-      value: this.dogma_attributes[attribute_id].value,
-    };
-  }
-
-  renderEveRefLink(locale: string = 'en') {
-    return `[${this.name[locale] ?? this.name.en}](${this.eveRefLink})`;
-  }
-
-  get blueprints(): { blueprint: Type; activity: ActivityType }[] {
-    if (!this.produced_by_blueprints) return [];
-    return Object.values(this.produced_by_blueprints).map((blueprint) => ({
-      blueprint: getType(blueprint.blueprint_type_id),
-      activity: blueprint.blueprint_activity,
-    }));
-  }
-
-  get schematics() {
-    return this.produced_by_schematic_ids?.map((schematic_id) => getType(schematic_id)) ?? [];
-  }
-
-  get group() {
-    return getGroup(this.group_id);
-  }
-
-  get variants() {
-    return Object.entries(this.type_variations || {}).map(([meta_group_id, variant_ids]) => ({
-      metaGroup: getMetaGroup(Number(meta_group_id)),
-      types: variant_ids.map((type_id) => getType(type_id)),
-    }));
-  }
-
-  get hasAttributes() {
-    return this.dogma_attributes && Object.keys(this.dogma_attributes).length > 0;
-  }
+  return skillBonuses;
 }
 
-export const getType = (type_id: number): Type => new Type(type_id);
+export function getRoleBonuses(type: Type) {
+  if (!type.traits || !type.traits.role_bonuses) return [];
+  return Object.values(type.traits.role_bonuses).map((bonus) => ({
+    bonus: bonus.bonus,
+    bonus_text: bonus.bonus_text,
+    importance: bonus.importance,
+    unit: bonus.unit_id && getUnit(bonus.unit_id),
+  }));
+}
+
+export function eveRefLink(type_id: number) {
+  return `https://everef.net/types/${type_id}`;
+}
+
+export function renderTypeEveRefLink(type: Type, locale: string = 'en') {
+  return `[${type.name[locale] ?? type.name.en}](${eveRefLink(type.type_id)})`;
+}
+
+export function eveTycoonLink(type_id: number) {
+  return `https://evetycoon.com/market/${type_id}`;
+}
+
+export function getTypeAttributes(type: Type) {
+  if (!type.dogma_attributes) return [];
+  Object.keys(type.dogma_attributes).map((attribute_id) => ({
+    attribute: getAttribute(Number(attribute_id)),
+    value: type.dogma_attributes![attribute_id].value,
+  }));
+}
+
+export function typeHasAnyAttribute(type: Type, attribute_ids: CommonAttribute[]) {
+  if (!type.dogma_attributes) return false;
+  for (const attribute_id of attribute_ids) {
+    if (type.dogma_attributes[attribute_id]) return true;
+  }
+  return false;
+}
+
+export function getTypeSkills(type: Type) {
+  if (!type.required_skills) return [];
+  Object.keys(type.required_skills).map((skill_type_id) => ({
+    skill: getType(Number(skill_type_id)),
+    level: type.required_skills![skill_type_id],
+  }));
+}
+
+export function typeGetAttribute(type: Type, attribute_id: number) {
+  if (!type.dogma_attributes || !type.dogma_attributes[attribute_id]) return null;
+  return {
+    attribute: getAttribute(attribute_id),
+    value: type.dogma_attributes[attribute_id].value,
+  };
+}
+
+export function getTypeBlueprints(type: Type) {
+  if (!type.produced_by_blueprints) return [];
+  return Object.values(type.produced_by_blueprints).map((blueprint) => ({
+    blueprint: getType(blueprint.blueprint_type_id),
+    activity: blueprint.blueprint_activity,
+  }));
+}
+
+export function getTypeSchematics(type: Type) {
+  return type.produced_by_schematic_ids?.map((schematic_id) => getType(schematic_id)) ?? [];
+}
+
+export function getTypeGroup(type: Type) {
+  if (!type.group_id) return null;
+  return getGroup(type.group_id);
+}
+
+export function getTypeVariants(type: Type) {
+  return Object.entries(type.type_variations || {}).map(([meta_group_id, variant_ids]) => ({
+    metaGroup: getMetaGroup(Number(meta_group_id)),
+    types: variant_ids.map((type_id) => getType(type_id)),
+  }));
+}
+
+export function typeHasAttributes(type: Type) {
+  return type.dogma_attributes && Object.keys(type.dogma_attributes).length > 0;
+}
+

@@ -1,13 +1,13 @@
 import { coloredText, renderThreeColumns, WHITE_SPACE, type Page } from '@lib/discord';
 import { EmbedBuilder } from 'discord.js';
-import type { Type } from '../../../../../../star-kitten-lib/src/eve/models/type';
-import { getCharacterSkills } from 'star-kitten-lib/eve';
-import { CommonCategory } from '../../../../../../star-kitten-lib/src/eve/models/category';
+import type { Type } from 'star-kitten-lib/eve';
+import { eveRefLink, getCharacterSkills, getGroup, getTypeIconUrl, getTypeSkills } from 'star-kitten-lib/eve';
+import { CommonCategory } from 'star-kitten-lib/eve';
 import type { PageKey, TypeContext } from '../ItemLookup';
-import { User } from 'star-kitten-lib/db';
+import { CharacterHelper, UserHelper } from 'star-kitten-lib/db';
 
 function canUseText(type: Type) {
-  const category = type.group.category.category_id;
+  const category = getGroup(type.group_id).category_id;
   switch (category) {
     case CommonCategory.SHIP:
       return 'fly this ship';
@@ -33,8 +33,8 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
             new EmbedBuilder()
               .setTitle(type.name[locale] ?? type.name.en)
               .setDescription('This item does not require any skills to use.')
-              .setThumbnail(type.iconUrl)
-              .setURL(type.eveRefLink)
+              .setThumbnail(getTypeIconUrl(type))
+              .setURL(eveRefLink(type.type_id))
               .setFooter({ text: `id: ${type.type_id}` })
               .setColor('Green'),
           ],
@@ -42,8 +42,9 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
         };
       }
 
-      const user = User.findByDiscordId(context.interaction.user.id);
-      const skills = user?.mainCharacter && await getCharacterSkills(user.mainCharacter);
+      const user = UserHelper.findByDiscordId(context.interaction.user.id);
+      const main = CharacterHelper.find(user.mainCharacterID);
+      const skills = main && await getCharacterSkills(main);
       const characterSkills: { [key: number]: number } = skills && (skills)?.skills.reduce(
         (acc, skill) => ({ ...acc, [skill.skill_id]: skill.trained_skill_level }),
         {},
@@ -51,25 +52,25 @@ export function skillsPage(key: PageKey.SKILLS, locale: string = 'en'): Page<Typ
 
       const embed = new EmbedBuilder()
         .setTitle(type.name[locale] ?? type.name.en)
-        .setThumbnail(type.iconUrl)
-        .setURL(type.eveRefLink)
+        .setThumbnail(getTypeIconUrl(type))
+        .setURL(eveRefLink(type.type_id))
         .setFooter({ text: `id: ${type.type_id} -- ◼ = trained | ☒ = required but not trained` });
 
       let description = '';
 
       description += '### Required Skills\n```\n';
-      description += type.skills
+      description += getTypeSkills(type)
         .map((skillLevel) => `${skillLevel.skill.name[locale] ?? skillLevel.skill.name.en} ${skillLevel.level}`)
         .join('\n');
       description += '```';
 
       let canFly = true;
       if (characterSkills) {
-        if (type.skills.every((skillLevel) => characterSkills[skillLevel.skill.type_id] >= skillLevel.level)) {
-          description += coloredText(`${user.mainCharacter.name} can ${canUseText(type)}`, 'green');
+        if (getTypeSkills(type).every((skillLevel) => characterSkills[skillLevel.skill.type_id] >= skillLevel.level)) {
+          description += coloredText(`${main.name} can ${canUseText(type)}`, 'green');
           canFly = true;
         } else {
-          description += coloredText(`${user.mainCharacter.name} cannot ${canUseText(type)}`, 'red');
+          description += coloredText(`${main.name} cannot ${canUseText(type)}`, 'red');
           canFly = false;
         }
       }
@@ -93,7 +94,7 @@ function getSkillNames(type: Type, locale: string, depth: number = 0) {
     spacing += WHITE_SPACE;
   }
   let names: string[] = [];
-  type.skills.forEach((skillLevel) => {
+  getTypeSkills(type).forEach((skillLevel) => {
     names.push(
       `${spacing}[${skillLevel.skill.name[locale] ?? skillLevel.skill.name.en}](${skillLevel.skill.eveRefLink})`,
     );
@@ -112,10 +113,10 @@ interface RequiredLevel {
 // skills is a map of skill_id to trained_skill_level
 function getSkillLevels(type: Type, skills?: { [key: number]: number }): RequiredLevel[] {
   let levels: RequiredLevel[] = [];
-  type.skills.forEach((skillLevel) => {
+  getTypeSkills(type).forEach((skillLevel) => {
     levels.push({
       required: skillLevel.level,
-      have: skills ? skills[skillLevel.skill.type_id] : 0,
+      have: skills ? skills[skillLevel.skill.type_id] || 0 : 0,
     });
     if (skillLevel.skill.skills.length > 0) {
       levels.push(...getSkillLevels(skillLevel.skill, skills));

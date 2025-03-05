@@ -1,7 +1,7 @@
 import { ButtonStyle, ChatInputCommandInteraction, CommandInteraction, MessageFlags } from 'discord.js';
 import { typeSearch } from '../lib/search';
 import { createActionRow, useNavigation, type ResumeableInteraction } from '@lib/discord';
-import type { Type } from '../../../../../star-kitten-lib/src/eve/models/type';
+import { getTypeBlueprints, getTypeSchematics, getTypeSkills, getTypeVariants, typeHasAttributes, type Type } from 'star-kitten-lib/eve';
 import { mainPage, attributesPage, fittingPage, skillsPage, industryPage } from './pages';
 
 export enum PageKey {
@@ -54,25 +54,25 @@ async function lookup(messageOrInteraction: ResumeableInteraction | ChatInputCom
   const buildButtonRow = (key: string, context: TypeContext) => {
     return createActionRow(
       { customId: PageKey.MAIN, label: 'Main', style: ButtonStyle.Primary, disabled: key === PageKey.MAIN },
-      context.type.hasAttributes && {
+      typeHasAttributes(context.type) && {
         customId: PageKey.ATTRIBUTES,
         label: 'Attributes',
         style: ButtonStyle.Primary,
         // disabled: key === PageKey.ATTRIBUTES,
       },
-      context.type.hasAttributes && {
+      typeHasAttributes(context.type) && {
         customId: PageKey.FITTING,
-        label: `Fitting${context.type.variants.length > 0 ? ' | Variants' : ''}`,
+        label: `Fitting${getTypeVariants(context.type).length > 0 ? ' | Variants' : ''}`,
         style: ButtonStyle.Primary,
         // disabled: key === PageKey.FITTING,
       },
-      context.type.skills.length > 0 && {
+      getTypeSkills(context.type)?.length > 0 && {
         customId: PageKey.SKILLS,
         label: 'Skills',
         style: ButtonStyle.Primary,
         // disabled: key === PageKey.SKILLS,
       },
-      (context.type.blueprints.length > 0 || context.type.schematics.length > 0) && {
+      (getTypeBlueprints(context.type)?.length > 0 || getTypeSchematics(context.type)?.length > 0) && {
         customId: PageKey.INDUSTRY,
         label: 'Industry',
         style: ButtonStyle.Primary,

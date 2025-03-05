@@ -2,16 +2,15 @@ import type { RequestContext } from 'brisa';
 import type { EVEAuth } from '@middleware';
 import { getCookies, removeCookie, setCookie } from '@utils';
 import { CharacterAPI, characterIdFromToken } from 'star-kitten-lib/eve';
-import { Character, User } from 'star-kitten-lib/db';
+import { CharacterHelper, UserHelper } from 'star-kitten-lib/db';
 
 // GET /api/auth/callback
 export async function GET(request: RequestContext) {
-  const eveauth: EVEAuth =  request.store.get('eveauth');
+  const eveauth: EVEAuth = request.store.get('eveauth');
   const response = new Response('', { status: 302 });
 
   try {
     const cookies = getCookies(request.headers);
-    console.log(cookies);
     const cookieDiscordID = cookies['discordID'];
     if (!cookieDiscordID) {
       throw new Error(`Missing discordID cookie in /api/auth/callback`);
@@ -24,13 +23,11 @@ export async function GET(request: RequestContext) {
       throw new Error(`Character ID mismatch: ${cookieCharacterID} !== ${characterID}`);
     }
 
-
-    let user = User.findByDiscordId(cookieDiscordID);
-    let character = user.characters.find(c => c.eveID === characterID);
+    let user = UserHelper.findByDiscordId(cookieDiscordID);
+    let character = CharacterHelper.findByUserAndEveID(user.id, Number(characterID));
 
     if (!user) {
-      user = User.create(cookieDiscordID);
-      user.save();
+      user = UserHelper.create(cookieDiscordID);
     }
 
     if (!user) {
@@ -42,39 +39,38 @@ export async function GET(request: RequestContext) {
       if (!data) {
         throw new Error(`Failed to retreive character public data for id: ${characterID} - unable to create character`);
       }
-      character = Character.create(characterID, data.name || 'UNKNOWN NAME', user, token);
-      character.save();
+      character = CharacterHelper.create(characterID, data.name || 'UNKNOWN NAME', user, token);
 
       // refetch from db to get id
-      user = User.findByDiscordId(cookieDiscordID);
-      character = user.characters.find(c => c.eveID === characterID);
+      user = UserHelper.findByDiscordId(cookieDiscordID);
+      character = CharacterHelper.findByUserAndEveID(user.id, Number(characterID));
+      if (!character) {
+        throw new Error(`Failed to retreive character from db for id: ${characterID}`);
+      }
 
-      if (!user.mainCharacter) {
-        user.mainCharacter = character;
-        user.save();
+      if (!user.mainCharacterID) {
+        user.mainCharacterID = character.id;
+        UserHelper.save(user);
       }
     } else {
       character.accessToken = token.access_token;
       character.expiresAt = new Date(Date.now() + token.expires_in * 1000);
       character.refreshToken = token.refresh_token;
-      character.save();
+      CharacterHelper.save(character);
     }
 
+    setCookie(response, 'currentUser', user.id + '', 60 * 60 * 24 * 30 /* 30 days */);
     response.headers.set('location', '/auth/success');
   } catch (err) {
-    
     console.error(`Error: Callback failed with ${err}`);
     response.headers.set('location', '/auth/error');
     return response;
-  
+
   } finally {
     removeCookie(response, 'discordID');
     removeCookie(response, 'characterID');
     removeCookie(response, 'state');
   }
-  
-  // TEMP -- set current user
-  setCookie(response, 'currentUser', User.find(1).id + '', 60 * 60 * 24 * 30 /* 30 days */);
 
   return response;
 }

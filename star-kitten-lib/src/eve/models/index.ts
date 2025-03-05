@@ -11,3 +11,4 @@ export * from './schematic';
 export * from './skill';
 export * from './type';
 export * from './unit';
+export * from './solarSystem';

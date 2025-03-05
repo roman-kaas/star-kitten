@@ -6,7 +6,6 @@
     ".": "./src/index.ts",
     "./eve": "./src/eve/index.ts",
     "./logger": "./src/logger.ts",
-    "./zORM": "./src/zORM/index.ts",
     "./scheduler": "./src/scheduler/index.ts",
     "./auth": "./src/auth/index.ts",
     "./db": "./src/db/index.ts"
@@ -31,8 +30,9 @@
   "scripts": {
     "generate-migrations": "bunx drizzle-kit generate --dialect sqlite --schema ./src/db/schema.ts",
     "migrate": "bun run ./src/db/migrate.ts",
-    "get-data": "bun run refresh:reference-data && bun run refresh:hoboleaks",
-    "refresh:reference-data": "bun run ./src/downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ../data/reference-data",
-    "refresh:hoboleaks": "bun run ./src/downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ../data/hoboleaks"
+    "get-data": "bun refresh:reference-data && bun refresh:hoboleaks && bun static-export",
+    "refresh:reference-data": "bun run ./src/downloadAndExtract.ts https://data.everef.net/reference-data/reference-data-latest.tar.xz ./data/reference-data",
+    "refresh:hoboleaks": "bun run ./src/downloadAndExtract.ts https://data.everef.net/hoboleaks-sde/hoboleaks-sde-latest.tar.xz ./data/hoboleaks",
+    "static-export": "bun run ./src/scripts/exportSolarSystems.ts"
   }
 }

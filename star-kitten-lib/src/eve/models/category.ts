@@ -1,11 +1,10 @@
-import jsonData from '@../../data/reference-data/categories.json';
-import { getGroup, type Group } from './group';
-import { getIcon, type Icon } from './icon';
+import jsonData from '../../../data/reference-data/categories.json';
 import type { LocalizedString } from './sharedTypes';
 
 export const categoryData: { [category_id: string]: Category } = jsonData as any;
 
 export enum CommonCategory {
+  CARGO = 5,
   SHIP = 6,
   MODULE = 7,
   CHARGE = 8,
@@ -22,30 +21,17 @@ export enum CommonCategory {
   FIGHTER = 87,
 }
 
-export class Category {
-  public readonly category_id: number;
-  public readonly name: LocalizedString;
-  public readonly published: boolean;
-  public readonly group_ids: number[];
-  public readonly icon_id?: number;
-
-  constructor(category_id: number) {
-    const data = categoryData[category_id];
-    if (!data) throw new Error(`Category ID ${category_id} not found in reference data`);
-    this.category_id = category_id;
-    this.name = data.name;
-    this.published = data.published;
-    this.group_ids = data.group_ids;
-    this.icon_id = data.icon_id;
-  }
-
-  public get groups(): Group[] {
-    return this.group_ids.map((group_id) => getGroup(group_id));
-  }
-
-  public get icon(): Icon {
-    return getIcon(this.icon_id);
-  }
+export interface Category {
+  readonly category_id: number;
+  readonly name: LocalizedString;
+  readonly published: boolean;
+  readonly group_ids: number[];
+  readonly icon_id?: number;
 }
 
-export const getCategory = (category_id: number): Category => new Category(category_id);
+export function getCategory(category_id: number) {
+  const data = categoryData[category_id];
+  if (!data) throw new Error(`Category ID ${category_id} not found in reference data`);
+  return data;
+}
+

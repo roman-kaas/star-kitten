@@ -1,6 +1,6 @@
 import { sanitize } from 'sanitize.js';
 import { create, insert, search } from '@orama/orama';
-import { getType, typeData, type Type } from '../../../../../star-kitten-lib/src/eve/models/type';
+import { getType, typeData, type Type } from 'star-kitten-lib/eve';
 
 const db = create({
   schema: {

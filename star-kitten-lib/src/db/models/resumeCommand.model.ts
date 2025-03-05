@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '@db';
-import { resumeCommands } from '@db/schema';
+import { db } from '..';
+import { resumeCommands } from '../schema';
 
 export class ResumeCommand {
   id!: string;
@@ -15,8 +15,8 @@ export class ResumeCommand {
 
   public static find(messageId: string) {
     const result = db.select().from(resumeCommands)
-        .where(eq(resumeCommands.id, messageId))
-        .get();
+      .where(eq(resumeCommands.id, messageId))
+      .get();
     return this.createFromQuery(result);
   }
 

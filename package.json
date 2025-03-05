@@ -1,9 +1,6 @@
 {
   "name": "star-kitten",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
   "scripts": {
     "bot:dev": "cd bot && bun dev",
     "web:dev": "cd web && bun dev",

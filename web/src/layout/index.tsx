@@ -5,17 +5,19 @@ import '@styles/style.css';
 import '@styles/nav.css';
 import '@styles/footer.css';
 import type { RequestContext } from 'brisa';
-import { User } from 'star-kitten-lib/db';
+import { UserHelper } from 'star-kitten-lib/db';
 import { getCookies } from '@utils';
 
 export default function Layout({ children }: { children: JSX.Element }, request: RequestContext) {
-  const cookies = getCookies(request.headers);
-  const userId = cookies.currentUser;
-  if (!userId) {
-    throw new Error('No user found');
-  }
-  const user = User.find(Number(userId));
-    
+  // const cookies = getCookies(request.headers);
+  // const userId = cookies.currentUser;
+  // if (!userId) {
+  //   throw new Error('No user found');
+  // }
+  // const user = User.find(Number(userId));
+
+  const user = UserHelper.find(1);
+
   return (
     <html lang="en" data-theme="dark">
       <head>
@@ -39,7 +41,7 @@ export default function Layout({ children }: { children: JSX.Element }, request:
           <Nav user={user} />
         </header>
         <main>{children}</main>
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );

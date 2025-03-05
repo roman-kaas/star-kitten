@@ -1,20 +1,19 @@
 import { getCookies } from '@utils';
 import type { RequestContext } from 'brisa';
-import { User } from 'star-kitten-lib/db';
-import { esi } from 'star-kitten-lib/eve';
+import { CharacterHelper, UserHelper } from 'star-kitten-lib/db';
 import SkillQueueStat from '@components/stats/skill-queue';
 import WalletStat from '@components/stats/wallet';
 
 export default function Homepage(props: any, request: RequestContext) {
 
-  const cookies = getCookies(request.headers);
-  const userId = cookies.currentUser;
-  if (!userId) {
-    throw new Error('No user found');
-  }
+  // const cookies = getCookies(request.headers);
+  // const userId = cookies.currentUser;
+  // if (!userId) {
+  //   throw new Error('No user found');
+  // }
 
-  const user = User.find(Number(userId));
-  const character = user.mainCharacter;
+  const user = UserHelper.find(1);
+  const character = user.mainCharacterID && CharacterHelper.find(user.mainCharacterID);
 
   return (
     <>
@@ -37,13 +36,12 @@ export default function Homepage(props: any, request: RequestContext) {
                   </svg>
                 </div>
                 <div class="stat-title">Characters</div>
-                <div class="stat-value">{user.characters.length}</div>
+                <div class="stat-value">{user.characterIDs.length}</div>
                 <div class="stat-desc">Jan 1st - Feb 1st</div>
               </div>
 
-              <SkillQueueStat character={character!} />
-
-              <WalletStat character={character!} />
+              {character && <SkillQueueStat character={character} />}
+              {character && <WalletStat character={character} />}
 
               <div class="stat">
                 <div class="stat-figure text-secondary">

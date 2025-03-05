@@ -1,7 +1,16 @@
 import { type Page } from '@lib/discord';
 import { PageKey, type TypeContext } from '../ItemLookup';
 import { EmbedBuilder } from 'discord.js';
-import { evetycoon } from 'star-kitten-lib/eve';
+import {
+  eveRefLink,
+  evetycoon,
+  eveTycoonLink,
+  getRoleBonuses,
+  getSkillBonuses,
+  getTypeGroup,
+  getTypeIconUrl,
+  groupEveRefLink,
+} from 'star-kitten-lib/eve';
 import { BREAKING_WHITE_SPACE, WHITE_SPACE } from '@lib/discord/utils/embeds';
 import { cleanText, formatNumberToShortForm } from '@lib/discord';
 
@@ -12,8 +21,8 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
       const type = context.type;
       const embed = new EmbedBuilder()
         .setTitle(type.name[locale] ?? type.name.en)
-        .setThumbnail(type.iconUrl)
-        .setURL(type.eveRefLink)
+        .setThumbnail(getTypeIconUrl(type))
+        .setURL(eveRefLink(type.type_id))
         .setFooter({ text: `id: ${type.type_id}` })
         .setColor('Green');
 
@@ -22,13 +31,15 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
       // Handle Description
       {
         let description = '';
-        description += `**Group:** [${type.group.name[locale] ?? type.group.name.en}](${type.group.eveRefLink})`;
+        const group = getTypeGroup(type);
+        description += `**Group:** [${group.name[locale] ?? group.name.en}](${groupEveRefLink(group.group_id)})\n`;
 
-        if (type.skillBonuses.length > 0) {
+        const skillBonuses = getSkillBonuses(type);
+        if (skillBonuses.length > 0) {
           description += '\n### Skill Bonuses\n';
-          description += type.skillBonuses
+          description += skillBonuses
             .map((bonus) => {
-              return `\n\n**[${bonus.skill.name[locale] ?? bonus.skill.name.en}](${bonus.skill.eveRefLink}) bonuses (per skill level)**
+              return `\n\n**[${bonus.skill.name[locale] ?? bonus.skill.name.en}](${eveRefLink(bonus.skill.type_id)}) bonuses (per skill level)**
         ${bonus.bonuses
                   .sort((a, b) => a.importance - b.importance)
                   .map(
@@ -39,9 +50,10 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
             .join('\n');
         }
 
-        if (type.roleBonuses.length > 0) {
+        const roleBonuses = getRoleBonuses(type);
+        if (roleBonuses.length > 0) {
           description += '\n### Role Bonuses\n';
-          description += type.roleBonuses
+          description += roleBonuses
             .sort((a, b) => a.importance - b.importance)
             .map(
               (b) =>
@@ -72,7 +84,7 @@ export function mainPage(key: string = PageKey.MAIN, locale: string = 'en'): Pag
             },
             {
               name: BREAKING_WHITE_SPACE,
-              value: `*[View on EVE Tycoon](${type.eveTycoonLink})*`,
+              value: `*[View on EVE Tycoon](${eveTycoonLink(type.type_id)})*`,
               inline: true,
             },
           );

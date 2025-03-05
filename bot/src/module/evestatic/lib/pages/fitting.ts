@@ -1,8 +1,15 @@
 import { EmbedBuilder } from 'discord.js';
 import { renderThreeColumns, type Page } from '@lib/discord';
-import { CommonAttribute } from '../../../../../../star-kitten-lib/src/eve/models/attribute';
 import { getAttributeNames, getAttributeValues } from './attributes';
 import { PageKey, type TypeContext } from '../ItemLookup';
+import {
+  eveRefLink,
+  getTypeIconUrl,
+  getTypeVariants,
+  typeHasAnyAttribute,
+  CommonAttribute,
+  renderTypeEveRefLink,
+} from 'star-kitten-lib/eve';
 
 export function fittingPage(key: string = PageKey.FITTING, locale: string = 'en'): Page<TypeContext> {
   return {
@@ -11,15 +18,15 @@ export function fittingPage(key: string = PageKey.FITTING, locale: string = 'en'
       const type = context.type;
       const embed = new EmbedBuilder()
         .setTitle(type.name[locale] ?? type.name.en)
-        .setThumbnail(type.iconUrl)
-        .setURL(type.eveRefLink)
+        .setThumbnail(getTypeIconUrl(type))
+        .setURL(eveRefLink(type.type_id))
         .setFooter({ text: `id: ${type.type_id}` })
         .setColor('Green');
 
       const fields = [];
 
       for (const [name, attrs] of Object.entries(attrMap)) {
-        if (!type.hasAnyAttribute(attrs)) continue;
+        if (!typeHasAnyAttribute(type, attrs)) continue;
         fields.push(
           ...renderThreeColumns(
             name,
@@ -32,11 +39,11 @@ export function fittingPage(key: string = PageKey.FITTING, locale: string = 'en'
 
       // get variants
       {
-        if (type.variants.length > 0) {
-          type.variants.map((v) => {
+        if (getTypeVariants(type).length > 0) {
+          getTypeVariants(type).map((v) => {
             fields.push({
               name: `${v.metaGroup.name[locale] ?? v.metaGroup.name.en} variants`,
-              value: v.types.map((t) => t.renderEveRefLink(locale)).join('\n'),
+              value: v.types.map((t) => renderTypeEveRefLink(t, locale)).join('\n'),
             });
           });
         }

@@ -2,7 +2,7 @@
 export default function Error() {
   return (
     <>
-      <div class="hero">
+      <div>
         <h1>
           EVE auth failed, close this tab and try again.
         </h1>

@@ -3,24 +3,34 @@ import { useNavigation, confirmationPage, type Page, type ResumeableInteraction 
 import { scopesPage } from './pages/scopes';
 import { characterPage } from './pages/character';
 import { emptyPage } from './pages/empty';
-import { ResumeCommand, User } from 'star-kitten-lib/db';
+import {
+  type Character,
+  ResumeCommand,
+  type User,
+  UserHelper,
+  CharacterHelper,
+} from 'star-kitten-lib/db';
 
 const COMMAND = 'characters';
 export interface CharacterContext {
   characterIndex: number;
   user: User;
+  character?: Character;
   discordID: string;
   disabled?: boolean;
+  public?: boolean;
 }
 
-export const data = new SlashCommandBuilder().setName(COMMAND).setDescription('Manage your characters');
+export const data = new SlashCommandBuilder()
+  .setName(COMMAND)
+  .setDescription('Manage your characters');
 
 export const enum PageKey {
   EMPTY = 'empty', // when no user exists or no characters are found for a user
   CHARACTER = 'character', // show character information
   NEXT = 'next', // show next character
   PREV = 'prev', // show previous character
-  SCOPES = 'scopes', // scope management
+  EDIT = 'edit', // scope management
   CONFIRM_DELETE = 'confirm-delete', // show confirmation to delete character
   CANCEL = 'cancel', // go back to characer page
   DELETE = 'delete', // delete the current character
@@ -44,18 +54,19 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
     interaction = (await interaction.deferReply({ flags: MessageFlags.Ephemeral })).interaction as any;
   }
 
-  const user = User.findByDiscordId(interaction.user.id);
+  const user = UserHelper.findByDiscordId(interaction.user.id);
+  context.user = user;
 
   const pages: Page<CharacterContext>[] = [
     emptyPage(PageKey.EMPTY),
     characterPage(PageKey.CHARACTER),
-    scopesPage(PageKey.SCOPES),
+    scopesPage(PageKey.EDIT),
     confirmationPage({
       key: PageKey.CONFIRM_DELETE,
       title: 'Remove Character',
       messageBuilder: (context: CharacterContext) => {
-        const character = context.user.characters[context.characterIndex];
-        return `Are you sure you want to logout ${character.name}?\n\nThis will remove all tokens and data associated with this character.`;
+        const character = UserHelper.getCharacter(user, context.characterIndex);
+        return `Are you sure you want to delete ${character.name}?\n\nThis will remove all tokens and data associated with this character.`;
       },
       cancelKey: PageKey.CANCEL,
       confirmKey: PageKey.DELETE,
@@ -64,7 +75,7 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
       key: PageKey.CONFIRM_REVOKE_SCOPES,
       title: 'Revoke All Scopes',
       messageBuilder: (context: CharacterContext) => {
-        const character = context.user.characters[context.characterIndex];
+        const character = UserHelper.getCharacter(user, context.characterIndex);
         return `Are you sure you want to remove all scopes for ${character.name}?`;
       },
       cancelKey: PageKey.CANCEL_SCOPES,
@@ -73,37 +84,26 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
   ];
 
   const updateContext = async (key: string, context: CharacterContext) => {
-    
-    const refreshUser = () => context.user = User.findByDiscordId(interaction.user.id);
-    
-    const getAndRefreshCharacter = async () => {
-      if (!context.user ||!context.user.characters || context.user.characters.length === 0) {
-        return;
-      }
-      const character = context.user.characters[context.characterIndex];
-      if (!character.validToken) {
-        await character.refreshTokens();
-        return context.user.characters[context.characterIndex];
-      }
-      return character;
-    };
+
+    const refreshUser = () => context.user = UserHelper.findByDiscordId(interaction.user.id);
+    context.character = await getAndRefreshCharacter(context);
 
     switch (key) {
-      case PageKey.NEXT: 
+      case PageKey.NEXT:
         context.characterIndex++;
-        await getAndRefreshCharacter();
+        context.character = await getAndRefreshCharacter(context);
         return PageKey.CHARACTER;
-      case PageKey.PREV: 
+      case PageKey.PREV:
         context.characterIndex--;
-        await getAndRefreshCharacter();
+        context.character = await getAndRefreshCharacter(context);
         return PageKey.CHARACTER;
       case PageKey.CANCEL:
         return PageKey.CHARACTER;
       case PageKey.CANCEL_SCOPES:
-        return PageKey.SCOPES;
+        return PageKey.EDIT;
       case PageKey.REVOKE_NONPUBLIC_SCOPES: {
-        const character = context.user.characters[context.characterIndex];
-        await character.refreshTokens('publicData');
+        const character = UserHelper.getCharacter(user, context.characterIndex);
+        await CharacterHelper.refreshTokens(character, 'publicData');
         return PageKey.CHARACTER;
       }
       case PageKey.REFRESH: {
@@ -111,27 +111,27 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
         return PageKey.CHARACTER;
       }
       case PageKey.DELETE: {
-        const character = context.user.characters[context.characterIndex];
-        character.delete();
-        delete user.characters[context.characterIndex];
+        const character = UserHelper.getCharacter(user, context.characterIndex);
+        CharacterHelper.delete(character);
+        delete user.characterIDs[context.characterIndex];
         context.characterIndex = Math.max(0, context.characterIndex - 1);
-        if (context.user.mainCharacter?.id === character.id) {
+        if (user.mainCharacterID === character.id) {
           // set main to next character if there are any, or null
-          context.user.mainCharacter = context.user.characters[context.characterIndex] ?? null;
-          user.save();
-          refreshUser();
+          user.mainCharacterID = UserHelper.getCharacter(user, context.characterIndex).id ?? null;
+          UserHelper.save(user);
         }
-        return context.user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER;
+        refreshUser();
+        return user.characterIDs.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER;
       }
       case PageKey.SET_MAIN: {
-        const character = context.user.characters[context.characterIndex];
-        context.user.mainCharacter = character;
-        context.user.save();
+        const character = UserHelper.getCharacter(user, context.characterIndex);
+        user.mainCharacterID = character.id;
+        UserHelper.save(user);
         refreshUser();
         return PageKey.CHARACTER;
       }
       default:
-        await getAndRefreshCharacter();
+        context.character = await getAndRefreshCharacter(context);
         refreshUser();
         return key;
     }
@@ -147,7 +147,7 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
   useNavigation({
     interaction,
     pages,
-    key: !user || !user.characters || user.characters.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER,
+    key: !user || !user.characterIDs || user.characterIDs.length === 0 ? PageKey.EMPTY : PageKey.CHARACTER,
     context: ctx,
     updateContext,
     saveResume: (messageId, context) => {
@@ -155,3 +155,16 @@ async function renderCharacters(interaction: CommandInteraction | ResumeableInte
     },
   });
 }
+
+export async function getAndRefreshCharacter({ user, character, characterIndex }: CharacterContext) {
+  if (!user || !user.characterIDs || user.characterIDs.length === 0) {
+    return;
+  }
+  character = UserHelper.getCharacter(user, characterIndex);
+  if (!CharacterHelper.hasValidToken(character)) {
+    await CharacterHelper.refreshTokens(character);
+    return UserHelper.getCharacter(user, characterIndex);
+  }
+  character = character;
+  return character;
+};

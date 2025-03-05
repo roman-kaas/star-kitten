@@ -1,4 +1,4 @@
-import type { Character } from '@db';
+import { CharacterHelper, type Character } from '../../db';
 import { esiFetch } from './fetch';
 
 // PUBLIC APIS ---------------------------------------------------------------
@@ -60,7 +60,7 @@ export interface AssetData {
 
 // required scope: esi-assets.read_corporation_assets.v1
 export async function getCorporationAssets(id: number, character: Character) {
-  if (!character.hasScope('esi-assets.read_corporation_assets.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-assets.read_corporation_assets.v1')) return null;
   return await esiFetch<Partial<AssetData>[]>(`/corporations/${id}/assets/`, character);
 }
 
@@ -75,7 +75,7 @@ export interface AssetLocation {
 
 // required scope: esi-assets.read_corporation_assets.v1
 export async function getCorporationAssetLocations(id: number, character: Character, ids: number[]) {
-  if (!character.hasScope('esi-assets.read_corporation_assets.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-assets.read_corporation_assets.v1')) return null;
   return await esiFetch<Partial<AssetLocation>[]>(`/corporations/${id}/assets/locations/`, character, {
     method: 'POST',
     body: JSON.stringify(ids),
@@ -89,7 +89,7 @@ export interface AssetNames {
 
 // required scope: esi-assets.read_corporation_assets.v1
 export async function getCorporationAssetNames(id: number, character: Character, ids: number[]) {
-  if (!character.hasScope('esi-assets.read_corporation_assets.v1')) return null;
+  if (!CharacterHelper.hasScope(character, 'esi-assets.read_corporation_assets.v1')) return null;
   return await esiFetch<Partial<AssetNames>[]>(`/corporations/${id}/assets/names/`, character, {
     method: 'POST',
     body: JSON.stringify(ids),

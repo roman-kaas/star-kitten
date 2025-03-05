@@ -1,5 +1,5 @@
-import { loadCommands, refreshCommands } from "$lib/discord";
-import { Client as DjsClient, Collection, GatewayIntentBits } from "discord.js";
+import { loadCommands, refreshCommands } from '@lib/discord';
+import { Client as DjsClient, Collection, GatewayIntentBits } from 'discord.js';
 
 const token = process.env.DISCORD_BOT_TOKEN;
 const appId = process.env.DISCORD_APP_ID;
@@ -12,7 +12,7 @@ discord.commands = await loadCommands({
   pattern: '**/*.command.{js,ts}',
 });
 
-discord.once("ready", async (client: Client) => {
+discord.once('ready', async (client: Client) => {
   console.log(`Discord logged in as in as ${client.user?.tag}`);
   await refreshCommands(discord, { token, appId, guildId });
   process.exit();

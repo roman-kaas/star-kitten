@@ -1,61 +1,30 @@
-import jsonData from '@../../data/reference-data/dogma_attributes.json';
-import { getCategory, type Category } from './category';
-import { getIcon, type Icon } from './icon';
+import jsonData from '../../../data/reference-data/dogma_attributes.json';
 import type { LocalizedString } from './sharedTypes';
-import { getUnit, type Unit } from './unit';
 
 export const attributeData: { [attribute_id: string]: Attribute } = jsonData as any;
 
-export class Attribute {
-  public readonly attribute_id: number;
-  public readonly category_id: number;
-  public readonly data_type: number;
-  public readonly default_value: number;
-  public readonly description: LocalizedString;
-  public readonly high_is_good: boolean;
-  public readonly icon_id?: number;
-  public readonly name: string;
-  public readonly published: boolean;
-  public readonly stackable: boolean;
-  public readonly unit_id?: number;
-  public readonly display_name: LocalizedString;
-  public readonly tooltip_title?: LocalizedString;
-  public readonly tooltip_description?: LocalizedString;
-
-  constructor(attribute_id: number) {
-    const data = attributeData[attribute_id];
-    if (!data) throw new Error(`Attribute ID ${attribute_id} not found in reference data`);
-    this.attribute_id = attribute_id;
-    this.category_id = data.category_id;
-    this.data_type = data.data_type;
-    this.default_value = data.default_value;
-    this.description = data.description;
-    this.high_is_good = data.high_is_good;
-    this.icon_id = data.icon_id;
-    this.name = data.name;
-    this.published = data.published;
-    this.stackable = data.stackable;
-    this.unit_id = data.unit_id;
-    this.display_name = data.display_name;
-    this.tooltip_title = data.tooltip_title;
-    this.tooltip_description = data.tooltip_description;
-  }
-
-  public get category(): Category {
-    return getCategory(this.category_id);
-  }
-
-  public get icon(): Icon {
-    return getIcon(this.icon_id);
-  }
-
-  public get unit(): Unit {
-    if (!this.unit_id) return null;
-    return getUnit(this.unit_id);
-  }
+export interface Attribute {
+  readonly attribute_id: number;
+  readonly category_id: number;
+  readonly data_type: number;
+  readonly default_value: number;
+  readonly description: LocalizedString;
+  readonly high_is_good: boolean;
+  readonly icon_id?: number;
+  readonly name: string;
+  readonly published: boolean;
+  readonly stackable: boolean;
+  readonly unit_id?: number;
+  readonly display_name: LocalizedString;
+  readonly tooltip_title?: LocalizedString;
+  readonly tooltip_description?: LocalizedString;
 }
 
-export const getAttribute = (attribute_id: number): Attribute => new Attribute(attribute_id);
+export const getAttribute = (attribute_id: number): Attribute => {
+  const data = attributeData[attribute_id];
+  if (!data) throw new Error(`Attribute ID ${attribute_id} not found in reference data`);
+  return data;
+};
 
 export enum CommonAttribute {
   // Structure

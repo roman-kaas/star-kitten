@@ -2,12 +2,13 @@ import { ButtonStyle, EmbedBuilder } from 'discord.js';
 import { type Page, WHITE_SPACE, createActionRow } from '@lib/discord';
 import type { AppModule } from '@lib/StarKitten';
 import { PageKey, type CharacterContext } from '../characters.command';
+import { CharacterHelper } from 'star-kitten-lib/db';
 
-export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
+export function scopesPage(key: string = 'edit'): Page<CharacterContext> {
   return {
     key,
     content: async (context: CharacterContext) => {
-      const character = context.user.characters[context.characterIndex];
+      const character = context.character;
       let description = WHITE_SPACE;
 
       // get modules, check if each module has the required scopes, list scopes per module and a link to add scopes if missing
@@ -23,9 +24,9 @@ export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
         }
         let scopesText = '';
         scopesText += `### ${module.name}\n`;
-        scopesText += `*${module.description}* \n`; 
+        scopesText += `*${module.description}* \n`;
         // scopesText += '```' + moduleScopes.join('\n') + '```\n';
-        scopesText += character.hasAllScopes(moduleScopes)
+        scopesText += CharacterHelper.hasAllScopes(character, moduleScopes)
           ? `:white_check_mark: You have all scopes!\n[Remove ${module.name} Scopes](${new URL(`${global.App.baseUrl}/api/auth/discordID/${context.user.discordID}/removeScopes/characterID/${character.eveID}/scopes/${moduleScopes.join(',')}`).href})\n\n`
           : `:x: You are missing required scopes\n[Add ${module.name} Scopes](${new URL(`${global.App.baseUrl}/api/auth/discordID/${context.user.discordID}/addScopes/characterID/${character.eveID}/scopes/${moduleScopes.join(',')}`).href})\n`;
 
@@ -48,13 +49,18 @@ export function scopesPage(key: string = 'scopes'): Page<CharacterContext> {
         components: [
           createActionRow(
             { customId: PageKey.CHARACTER, label: 'Back' },
-            { customId: PageKey.SCOPES, style: ButtonStyle.Secondary, label: 'Refresh' },
-            !character.isOnlyPublicScope && {
+            { customId: PageKey.EDIT, style: ButtonStyle.Secondary, label: 'Refresh' },
+            CharacterHelper.hasValidToken(character) && context.user.mainCharacterID !== character.id && {
+              customId: PageKey.SET_MAIN,
+              label: 'Set as Main',
+              style: ButtonStyle.Success,
+            },
+            !CharacterHelper.hasOnlyPublicScope(character) && {
               customId: PageKey.CONFIRM_REVOKE_SCOPES,
               label: 'Revoke All Scopes',
               style: ButtonStyle.Danger,
             },
-            { customId: PageKey.CONFIRM_DELETE, label: 'Logout', style: ButtonStyle.Danger },
+            { customId: PageKey.CONFIRM_DELETE, label: 'Delete', style: ButtonStyle.Danger },
           ),
         ],
         ephemeral: true,

@@ -1,4 +1,4 @@
-import type { User } from 'star-kitten-lib/db';
+import { CharacterHelper, type User } from 'star-kitten-lib/db';
 import { CharacterAPI } from 'star-kitten-lib/eve';
 
 export default function Nav({
@@ -6,6 +6,7 @@ export default function Nav({
 }: {
   user: User;
 }) {
+  const main = user.mainCharacterID && CharacterHelper.find(user.mainCharacterID);
   return (
     <div class="navbar bg-base-100 shadow-sm">
       <div class="flex-1">
@@ -18,19 +19,19 @@ export default function Nav({
             <div class="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-                src={CharacterAPI.getPortraitURL(user.mainCharacter!.eveID)} />
+                src={main && CharacterAPI.getPortraitURL(main.eveID) || ''} />
             </div>
           </div>
           <ul
             tabIndex={0}
             class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
             <li>
-              {user.mainCharacter!.name}
+              {main && main.name}
             </li>
             <li>
               <a class="justify-between">
                 Characters
-                <span class="badge">{user.characters.length}</span>
+                <span class="badge">{user.characterIDs.length}</span>
               </a>
             </li>
             <li><a>Link Character</a></li>

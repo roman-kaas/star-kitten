@@ -1,4 +1,4 @@
-import { Character } from '@db/models';
+import { type Character, CharacterHelper } from '../../db/models';
 import { options } from './options';
 import { ESI_LATEST_URL } from './scopes';
 
@@ -32,6 +32,7 @@ export async function esiFetch<T>(
   character?: Character,
   { method = 'GET', body, noCache = false, cacheDuration = defaultCacheDuration }: Partial<RequestOptions> = {},
 ) {
+
   try {
     const headers = {
       'User-Agent': options.user_agent,
@@ -40,9 +41,9 @@ export async function esiFetch<T>(
 
     if (character) {
       // check if the token is expired
-      if (!character.validToken) {
-        await character.refreshTokens();
-        if (!character.validToken) {
+      if (!CharacterHelper.hasValidToken(character)) {
+        await CharacterHelper.refreshTokens(character);
+        if (!CharacterHelper.hasValidToken(character)) {
           throw new Error(`Failed to refresh token for character: ${character.eveID}`);
         }
       }

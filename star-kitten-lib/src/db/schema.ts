@@ -1,5 +1,5 @@
-import { sqliteTable, text, integer, primaryKey, index } from 'drizzle-orm/sqlite-core';
-import { aliasedTable, relations } from 'drizzle-orm';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 
 export const shared = {
   createdAt: integer('created_at').notNull(),

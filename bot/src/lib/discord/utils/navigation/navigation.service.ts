@@ -12,14 +12,14 @@ import { errorResponse, validateEmbeds } from '../embeds';
 import type { ResumeableInteraction } from '../loadCommands';
 import { ResumeCommand } from 'star-kitten-lib/db';
 
-interface ModalContent {
+export interface ModalContent {
   type: 'modal';
   customId: string;
   title: string;
   components: any[];
 }
 
-interface PageContent {
+export interface PageContent {
   type: 'page';
   embeds?: EmbedBuilder[];
   components?: any[];

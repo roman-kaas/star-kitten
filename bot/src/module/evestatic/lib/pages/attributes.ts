@@ -1,8 +1,17 @@
 import { renderThreeColumns, type Page } from '@lib/discord';
 import { EmbedBuilder } from 'discord.js';
-import { CommonAttribute } from '../../../../../../star-kitten-lib/src/eve/models/attribute';
-import type { Type } from '../../../../../../star-kitten-lib/src/eve/models/type';
-import attributeOrders from '@../../data/hoboleaks/attributeOrders.json';
+import {
+  attributeOrdering,
+  type Type,
+  CommonAttribute,
+  eveRefLink,
+  getTypeIconUrl,
+  typeHasAnyAttribute,
+  getGroup,
+  typeGetAttribute,
+  getUnit,
+  renderUnit
+} from 'star-kitten-lib/eve';
 import type { PageKey, TypeContext } from '../ItemLookup';
 
 export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): Page<TypeContext> {
@@ -12,8 +21,8 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
       const type = context.type;
       const embed = new EmbedBuilder()
         .setTitle(type.name[locale] ?? type.name.en)
-        .setThumbnail(type.iconUrl)
-        .setURL(type.eveRefLink)
+        .setThumbnail(getTypeIconUrl(type))
+        .setURL(eveRefLink(type.type_id))
         .setFooter({ text: `id: ${type.type_id}` })
         .setColor('Green');
 
@@ -22,18 +31,18 @@ export function attributesPage(key: PageKey.ATTRIBUTES, locale: string = 'en'): 
 
       if (type.dogma_attributes) {
         const useOrders =
-          type.group.category.category_id === 11
-            ? attributeOrders['11']
-            : type.group.category.category_id === 87
-              ? attributeOrders['87']
-              : attributeOrders.default;
+          getGroup(type.group_id).category_id === 11
+            ? attributeOrdering['11']
+            : getGroup(type.group_id).category_id === 87
+              ? attributeOrdering['87']
+              : attributeOrdering.default;
 
         Object.entries(useOrders).map((pair) => {
           const [attributePath, attrs] = pair;
           const combined = attrs['groupedAttributes']
             ? attrs.normalAttributes.concat(...(attrs['groupedAttributes']?.map(([name, id]) => id) ?? []))
             : attrs.normalAttributes;
-          if (!type.hasAnyAttribute(combined)) return;
+          if (!typeHasAnyAttribute(type, combined)) return;
           const split = attributePath.split('/');
           const name = split[split.length - 1];
           fields.push(
@@ -165,14 +174,14 @@ const attrMap = {
 
 export function getAttributeNames(type: Type, ids: number[], locale: string = 'en') {
   return ids
-    .map((id) => type.getAttribute(id))
+    .map((id) => typeGetAttribute(type, id))
     .filter((attr) => !!attr)
     .map((attr) => `> ${attr.attribute.display_name[locale] ?? attr.attribute.display_name.en}`);
 }
 
 export function getAttributeValues(type: Type, ids: number[], locale: string = 'en') {
   return ids
-    .map((id) => type.getAttribute(id))
+    .map((id) => typeGetAttribute(type, id))
     .filter((attr) => !!attr)
-    .map((attr) => `**${attr.attribute.unit?.renderValue(attr.value) ?? attr.value}**`);
+    .map((attr) => `**${attr.attribute.unit_id ? renderUnit(getUnit(attr.attribute.unit_id), attr.value) : attr.value}**`);
 }
